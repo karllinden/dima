@@ -1,0 +1,8 @@
+TODO
+ * Complete the implementations mentioned in README.md and include/dima/dima.h.
+ * Configure CI for clang-format.
+ * Configure CI for building, unit testing and unit testing under valgrind.
+ * Design and implement the environment detection implementation in
+   dima_env_instance().
+ * Documentation.
+ * LD_PRELOAD adapter with dima-ld-preload.so that uses dima_env_instance().
