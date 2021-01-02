@@ -9,12 +9,12 @@ project(
     'werror=true'
   ])
 
-add_global_arguments(
-  [
-    '-Wold-style-declaration',
-    '-Wmissing-declarations',
-  ],
-  language: 'c')
+cc_flags = [
+  '-Wold-style-declaration',
+  '-Wmissing-declarations',
+]
+cc = meson.get_compiler('c')
+add_global_arguments(cc.get_supported_arguments(cc_flags), language: 'c')
 
 name = 'dima'
 slot = meson.project_version().split('.')[0]
