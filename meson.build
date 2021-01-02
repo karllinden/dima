@@ -10,6 +10,7 @@ project(
   ])
 
 cc_flags = [
+  '-Wformat-security',
   '-Wold-style-declaration',
   '-Wmissing-declarations',
 ]
