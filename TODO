@@ -1,7 +1,6 @@
 TODO
  * Complete the implementations mentioned in README.md and include/dima/dima.h.
  * Configure CI for coverage builds.
- * Configure CI for testing under valgrind.
  * Design and implement the environment detection implementation in
    dima_env_instance().
  * Documentation.
