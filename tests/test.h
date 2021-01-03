@@ -19,9 +19,17 @@
 
 #include <check.h>
 
+#include <dima/dima.h>
+
 #define ADD_TEST(name) add_test(suite, #name, test_##name)
 
+extern struct dima *test_dima;
+
+/* Provided by each of the test programs. */
+void init_test_dima(void);
 void add_tests(Suite *suite);
+
+/* Provided by test.c. */
 void add_test(Suite *suite, const char *name, TFun func);
 
 #endif /* !TEST_H */

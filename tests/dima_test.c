@@ -40,6 +40,8 @@ struct fake {
     size_t n;
 };
 
+static struct fake fake;
+
 static char fake_return[3];
 
 static void *fake_malloc(struct dima *dima, size_t size) {
@@ -131,10 +133,7 @@ static void fake_init(struct fake *fake) {
 }
 
 START_TEST(test_calls_malloc_fn) {
-    struct fake fake;
-    fake_init(&fake);
-
-    void *ret = dima_malloc(&fake.dima, 79);
+    void *ret = dima_malloc(test_dima, 79);
     ck_assert_int_eq(1, fake.count);
     ck_assert_int_eq(FAKE_MALLOC, fake.func);
     ck_assert_uint_eq(79, fake.size);
@@ -143,11 +142,8 @@ START_TEST(test_calls_malloc_fn) {
 END_TEST
 
 START_TEST(test_calls_free_fn) {
-    struct fake fake;
-    fake_init(&fake);
-
     int x;
-    dima_free(&fake.dima, &x);
+    dima_free(test_dima, &x);
     ck_assert_int_eq(1, fake.count);
     ck_assert_int_eq(FAKE_FREE, fake.func);
     ck_assert_ptr_eq(&x, fake.ptr);
@@ -155,10 +151,7 @@ START_TEST(test_calls_free_fn) {
 END_TEST
 
 START_TEST(test_calls_calloc_fn) {
-    struct fake fake;
-    fake_init(&fake);
-
-    void *ret = dima_calloc(&fake.dima, 789, 654);
+    void *ret = dima_calloc(test_dima, 789, 654);
     ck_assert_int_eq(1, fake.count);
     ck_assert_int_eq(FAKE_CALLOC, fake.func);
     ck_assert_uint_eq(789, fake.nmemb);
@@ -168,11 +161,8 @@ START_TEST(test_calls_calloc_fn) {
 END_TEST
 
 START_TEST(test_calls_realloc_fn) {
-    struct fake fake;
-    fake_init(&fake);
-
     int x;
-    void *ret = dima_realloc(&fake.dima, &x, 1462);
+    void *ret = dima_realloc(test_dima, &x, 1462);
     ck_assert_int_eq(1, fake.count);
     ck_assert_int_eq(FAKE_REALLOC, fake.func);
     ck_assert_ptr_eq(&x, fake.ptr);
@@ -182,10 +172,7 @@ START_TEST(test_calls_realloc_fn) {
 END_TEST
 
 START_TEST(test_calls_mallocarray_fn) {
-    struct fake fake;
-    fake_init(&fake);
-
-    void *ret = dima_mallocarray(&fake.dima, 148, 962);
+    void *ret = dima_mallocarray(test_dima, 148, 962);
     ck_assert_int_eq(1, fake.count);
     ck_assert_int_eq(FAKE_MALLOCARRAY, fake.func);
     ck_assert_uint_eq(148, fake.nmemb);
@@ -195,11 +182,8 @@ START_TEST(test_calls_mallocarray_fn) {
 END_TEST
 
 START_TEST(test_calls_reallocarray_fn) {
-    struct fake fake;
-    fake_init(&fake);
-
     int x;
-    void *ret = dima_reallocarray(&fake.dima, &x, 975, 135);
+    void *ret = dima_reallocarray(test_dima, &x, 975, 135);
     ck_assert_int_eq(1, fake.count);
     ck_assert_int_eq(FAKE_REALLOCARRAY, fake.func);
     ck_assert_ptr_eq(&x, fake.ptr);
@@ -210,11 +194,8 @@ START_TEST(test_calls_reallocarray_fn) {
 END_TEST
 
 START_TEST(test_calls_strdup_fn) {
-    struct fake fake;
-    fake_init(&fake);
-
     const char *s = "Hello";
-    char *ret = dima_strdup(&fake.dima, s);
+    char *ret = dima_strdup(test_dima, s);
     ck_assert_int_eq(1, fake.count);
     ck_assert_int_eq(FAKE_STRDUP, fake.func);
     ck_assert_ptr_eq(s, fake.s);
@@ -223,11 +204,8 @@ START_TEST(test_calls_strdup_fn) {
 END_TEST
 
 START_TEST(test_calls_strndup_fn) {
-    struct fake fake;
-    fake_init(&fake);
-
     const char *s = "Goodbye";
-    char *ret = dima_strndup(&fake.dima, s, 4);
+    char *ret = dima_strndup(test_dima, s, 4);
     ck_assert_int_eq(1, fake.count);
     ck_assert_int_eq(FAKE_STRNDUP, fake.func);
     ck_assert_ptr_eq(s, fake.s);
@@ -235,6 +213,11 @@ START_TEST(test_calls_strndup_fn) {
     ck_assert_ptr_eq(fake_return, ret);
 }
 END_TEST
+
+void init_test_dima(void) {
+    fake_init(&fake);
+    test_dima = &fake.dima;
+}
 
 void add_tests(Suite *suite) {
     ADD_TEST(calls_malloc_fn);

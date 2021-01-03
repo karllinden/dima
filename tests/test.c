@@ -19,13 +19,20 @@
 
 #include "test.h"
 
+struct dima *test_dima = NULL;
+
 static const char *determine_suite_name(const char *arg) {
     const char *s = strrchr(arg, '/');
     return s != NULL ? s + 1 : arg;
 }
 
+static void teardown(void) {
+    /* Nothing to do. */
+}
+
 void add_test(Suite *suite, const char *name, TFun func) {
     TCase *tc = tcase_create(name);
+    tcase_add_checked_fixture(tc, init_test_dima, teardown);
     tcase_add_test(tc, func);
     suite_add_tcase(suite, tc);
 }
