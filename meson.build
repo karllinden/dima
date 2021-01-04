@@ -29,6 +29,7 @@ host_system = host_machine.system()
 
 header_names = [
   'dima',
+  'system',
 ]
 headers = []
 foreach header_name : header_names
@@ -41,6 +42,7 @@ incdirs = include_directories('include')
 sources = []
 source_names = [
   'dima',
+  'system',
 ]
 foreach source_name : source_names
   sources += join_paths('src', source_name + '.c')
@@ -66,12 +68,14 @@ if check.found()
   testlib = static_library(
     'testlib',
     [
+      'tests/standard_tests.c',
       'tests/test.c'
     ],
     dependencies: [check, dima])
 
   test_names = [
     'dima',
+    'system',
   ]
   foreach name : test_names
     test_source = join_paths('tests', name + '_test.c')
