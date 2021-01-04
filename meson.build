@@ -19,7 +19,7 @@ add_global_arguments(cc.get_supported_arguments(cc_flags), language: 'c')
 
 name = 'dima'
 slot = meson.project_version().split('.')[0]
-slotname = name + '-'+ slot
+slotname = name + '-' + slot
 libslotname = meson.project_name() + '-' + slot
 
 pkg = import('pkgconfig')
@@ -63,6 +63,13 @@ pkg.generate(
 
 check = dependency('check', required: get_option('test'))
 if check.found()
+  testlib = static_library(
+    'testlib',
+    [
+      'tests/test.c'
+    ],
+    dependencies: [check, dima])
+
   test_names = [
     'dima',
   ]
@@ -70,11 +77,9 @@ if check.found()
     test_source = join_paths('tests', name + '_test.c')
     exe = executable(
       name + '_test',
-      [
-        'tests/test.c',
-        test_source,
-      ],
-      dependencies: [check, dima])
+      test_source,
+      dependencies: [check, dima],
+      link_with: testlib)
     test(name, exe)
   endforeach
 endif
