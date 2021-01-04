@@ -17,13 +17,60 @@
 /*
  * dima/dima.h
  * -----------
- * Declarations of the dependency-injectible memory allocator (DIMA) abtraction.
+ * Declaration of the dependency-injectible memory allocator (DIMA) abtraction.
  *
- * Implementations of the DIMA abstraction can be found in the other
- * headers, such as:
+ * The DIMA abstraction supports the following functions:
+ *  + dima_malloc()
+ *  + dima_free()
+ *  + dima_calloc()
+ *  + dima_realloc()
+ *  + dima_mallocarray()
+ *  + dima_reallocarray()
+ *  + dima_strdup()
+ *  + dima_strndup().
+ * The signatures of these functions are described in this header. They all take
+ * the struct dima * implementation as their first argument, which is not
+ * allowed to be NULL. On error these functions return NULL or exit, depending
+ * on the implementation. (See for example dima_init_exiting_on_failure().) On
+ * error these functions are not required to set the errno variable.
+ *
+ * The dima_malloc(), dima_calloc(), dima_realloc() behave as their C11 standard
+ * library counterparts, except that the memory is allocated according to the
+ * DIMA implementation and that they may exit on failure.
+ *
+ * The dima_free() function behaves as the C11 standard library free(), except
+ * that it free's memory according to the DIMA implementation.
+ *
+ * dima_mallocarray() behaves as dima_calloc() except that the returned memory
+ * is not initialized to zero.
+ *
+ * The dima_reallocarray(), dima_strdup() and dima_strndup() functions behave as
+ * their glibc counterparts, except that they allocate memory according to the
+ * DIMA implementation, are not required to set errno on failure, and may exit
+ * on failure. Unlike in glibc, dima_reallocarray(d, p, 0, 0) is not required to
+ * be equivalent to dima_free(d, p).
+ *
+ * The dima_calloc(), dima_mallocarray() and dima_reallocarray() fail if the
+ * total size, nmemb * size, overflows.
+ *
+ * Implementations are free to make further guarantees that are not required by
+ * this abstraction. For example an implementation may guarantees such as:
+ *  + the functions are multi-thread safe
+ *  + the functions never exit on failure
+ *  + the functions always exit on failure
+ *  + errno is always set on error
+ *  + dima_malloc(d, 0) always returns non-NULL
+ *  + dima_realloc(d, p, 0) behaves as dima_free(d, p)
+ *  + etc.
+ * Implementors should document any additional guarantees. See for example
+ * dima_init_exiting_on_failure and dima_init_mutex_locked. Clients may depend
+ * on any additional guarantees, but they should document any additional
+ * requirements.
+ *
+ * For examples of some implementations of this abstraction can see:
  *  + dima/system.h (TODO)
  *  + dima/malloc_and_free.h (TODO)
- *  + dima/realloc.h (TODO)
+ *  + dima/realloc_and_free.h (TODO)
  *  + dima/exiting_on_failure.h (TODO)
  *  + dima/mutex_locked.h (TODO)
  *  + dima/spin_locked.h (TODO)
@@ -35,25 +82,21 @@
  *
  * Clients outside the DIMA library may implement this abstraction, by creating
  * a struct that has a struct dima as first member and filling the composed dima
- * with a custom dima_vtable with the functions that should be called on the
- * structure. Any data necessary for the implementation can be placed after the
- * the composed dima structure.  All function pointers in the vtable must be set
- * to non-NULL values. To avoid re-implementing some functions, implementors can
- * use dima_init_vtable_with_malloc_and_free (TODO) or
- * dima_init_vtable_with_realloc (TODO) and then set any extra functions.
+ * with a custom dima_vtable containing the functions that should be called on
+ * the structure. Any data necessary for the implementation must be placed after
+ * the the composed dima structure. All function pointers in the vtable must be
+ * set to non-NULL values, and the pointed to functions must behave as described
+ * above. To avoid re-implementing some functions, implementors can use
+ * dima_init_vtable_with_malloc_and_free (TODO) or
+ * dima_init_vtable_with_realloc_and_free (TODO) and then set any extra
+ * functions.
  *
  * Implementations should document whether or not they are safe for
  * multi-threaded use, because that is not required by this abstraction. As long
  * as an implementation is not thread hostile, it can be made thread safe by
- * wrapping in a dima_mutex_locked (TODO) or dima_spin_locked (TODO). See the
- * corresponding headers for more information.
- *
- * The functions behave as their standard library counterparts, except that they
- * take a struct dima. For example dima_malloc allocates a memory block of a
- * given size. However, note that implementations may exit on failure (instead
- * of returning NULL). This is what dima_exiting_on_error (TODO) does. The dima
- * used for dima_free must match the dima used for the allocating function, such
- * as dima_malloc or dima_strdup.
+ * wrapping in a dima_mutex_locked (TODO) or dima_spin_locked (TODO). See
+ * dima/mutex_locked.h (TODO) and dima/spin_locked.h (TODO) respectively for
+ * more information.
  */
 
 #ifndef DIMA_DIMA_H

@@ -80,15 +80,33 @@ You can then get the compiler flags and libraries through `pkg-config` with
 `pkg-config --cflags dima-${X}` and `pkg-config --libs dima-${X}` with `${X}`
 substituted by the major version of this library.
 
+## Documentation
+
+The API is documented in comments in the header files.
+(I think comments in the headers are enough documentation, but if you like
+Doxygen, then feel free to submit a pull request.)
+I would suggest reading in the following order, and you can stop reading when
+you don't want/need to know more:
+
+ 1. The usage example below, so that you know what all this is about and how it
+    is intended to be used.
+ 2. The documentation in `include/dima/dima.h`, but not in too much detail, so
+    that you get a better overview.
+ 3. The declarations in `include/dima/dima.h`, so that you see which functions
+    you are supposed to use.
+ 4. The declarations for an implementation, such as `include/dima/system.h` and
+    optionally its implementation file (`src/system.c`), so that you get a
+    feeling of how using an implementation works.
+ 5. The documentation in `include/dima/dima.h` in detail, so that you don't make
+    any invalid assumptions (such as relying on errno).
+
 ## Usage
 
 Using DIMA is very straight-forward.
 You only need to dependency inject a `struct dima` to where it is needed.
-The library comes with a few ready-to-use implementations of `struct dima`, such
-as `dima_system` (that uses the operating system's memory allocation),
-`dima_env_instance()` (that allows the memory allocation to be configured from
-environment variables) and `dima_exiting_on_failure` (which exits the program
-on failure).
+The library comes with a few ready-to-use implementations of `struct dima`.
+For example see `dima_init_system()`, `dima_init_env()` and
+`dima_init_exiting_on_failure()`.
 For example, this silly `range` function allows any DIMA implementation to be
 used for creating the returned array:
 
@@ -132,15 +150,17 @@ void example(struct dima *dima, size_t max_exclusive) {
 }
 
 int main(void) {
+    struct dima system;
+    dima_init_system(&system);
     /* Use the memory allocation functions provided by the system. */
-    example(&dima_system, 10);
+    example(&system, 10);
 
     /* Use a DIMA that is configured with environment variables. */
     example(dima_env_instance(), 41);
 
     /* Decorate the system's allocator to exit with status 14 on failure. */
     struct dima_exiting_on_failure deof;
-    dima_init_exiting_on_failure(&deof, &dima_system, 14);
+    dima_init_exiting_on_failure(&deof, &system, 14);
     example(dima_from_exiting_on_failure(&deof), 24);
 
     return 0;
