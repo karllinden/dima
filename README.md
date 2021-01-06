@@ -150,13 +150,15 @@ void example(struct dima *dima, size_t max_exclusive) {
 }
 
 int main(void) {
+    /* Use the memory allocation functions provided by the system. */
     struct dima system;
     dima_init_system(&system);
-    /* Use the memory allocation functions provided by the system. */
     example(&system, 10);
 
     /* Use a DIMA that is configured with environment variables. */
-    example(dima_env_instance(), 41);
+    struct dima env;
+    dima_init_env(&env);
+    example(&env, 41);
 
     /* Decorate the system's allocator to exit with status 14 on failure. */
     struct dima_exiting_on_failure deof;
@@ -172,4 +174,4 @@ int main(void) {
 It is possible to implement custom allocators outside DIMA.
 See the instructions in `include/dima/dima.h` for how to do that.
 See also the implementations that are part of this library, for example
-`src/exiting_on_failure.c` and `src/malloc_and_free.h`.
+`src/exiting_on_failure.c` and `src/realloc_and_free.h`.

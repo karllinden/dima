@@ -5,5 +5,5 @@ TODO
    dima_make_thread_safe(), dima_make_gnu_extended()?
  * Complete the implementations mentioned in README.md and include/dima/dima.h.
  * Design and implement the environment detection implementation in
-   dima_env_instance().
- * LD_PRELOAD adapter with dima-ld-preload.so that uses dima_env_instance().
+   dima_init_env().
+ * LD_PRELOAD adapter with dima-ld-preload.so that uses dima_init_env().

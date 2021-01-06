@@ -69,7 +69,7 @@
  *
  * For examples of some implementations of this abstraction can see:
  *  + dima/system.h (TODO)
- *  + dima/malloc_and_free.h (TODO)
+ *  + dima/env.h (TODO)
  *  + dima/realloc_and_free.h (TODO)
  *  + dima/exiting_on_failure.h (TODO)
  *  + dima/mutex_locked.h (TODO)
@@ -87,7 +87,6 @@
  * the the composed dima structure. All function pointers in the vtable must be
  * set to non-NULL values, and the pointed to functions must behave as described
  * above. To avoid re-implementing some functions, implementors can use
- * dima_init_vtable_with_malloc_and_free (TODO) or
  * dima_init_vtable_with_realloc_and_free (TODO) and then set any extra
  * functions.
  *
