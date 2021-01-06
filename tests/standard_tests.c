@@ -17,17 +17,17 @@
 #include "standard_tests.h"
 #include "test.h"
 
-/* Wrapper around dima_malloc(test_dima, size) or dima_realloc(test_dima, ptr,
- * size) with some ptr. */
-typedef void *allocate_fn(void *ptr, size_t size);
+/* Wrapper around dima_malloc(test_dima, size) or dima_realloc(test_dima, NULL,
+ * size). */
+typedef void *alloc_fn(size_t size);
 
-static void test_returns_null_on_failure(void *ptr, allocate_fn *allocate) {
+static void test_returns_null_on_failure(alloc_fn *alloc) {
     /* Valgrind reports that the input is suspicious if a division is not used
      * here, but allocating 5/4 * SIZE_MAX should fail even if it is done in
      * five allocations. */
     void *ptrs[5];
     for (int i = 0; i < 5; ++i) {
-        ptrs[i] = allocate(ptr, SIZE_MAX / 4);
+        ptrs[i] = alloc(SIZE_MAX / 4);
     }
     ck_assert(ptrs[0] == NULL //
               || ptrs[1] == NULL //
@@ -67,12 +67,12 @@ START_TEST(test_malloced_memory_is_writable) {
 }
 END_TEST
 
-static void *test_dima_malloc(void *ptr __attribute__((unused)), size_t size) {
+static void *test_dima_malloc(size_t size) {
     return dima_malloc(test_dima, size);
 }
 
 START_TEST(test_malloc_returns_null_on_failure) {
-    test_returns_null_on_failure(NULL, test_dima_malloc);
+    test_returns_null_on_failure(test_dima_malloc);
 }
 END_TEST
 
