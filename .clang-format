@@ -1,15 +1,17 @@
-Language:                         Cpp
+Language:                                  Cpp
 
-BasedOnStyle:                     LLVM
-AlignTrailingComments:            false
-AllowShortFunctionsOnASingleLine: None
-BinPackArguments:                 false
-BinPackParameters:                false
-BreakBeforeBinaryOperators:       All
-ContinuationIndentWidth:          8
-IndentCaseLabels:                 true
-IndentWidth:                      4
-PenaltyReturnTypeOnItsOwnLine:    200
+BasedOnStyle:                              LLVM
+AlignEscapedNewlines:                      DontAlign
+AlignTrailingComments:                     false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortFunctionsOnASingleLine:          None
+BinPackArguments:                          false
+BinPackParameters:                         false
+BreakBeforeBinaryOperators:                All
+ContinuationIndentWidth:                   8
+IndentCaseLabels:                          true
+IndentWidth:                               4
+PenaltyReturnTypeOnItsOwnLine:             200
 
 # TODO: Wanted, but not supported in Clang Format 10.
 # AlignOperands: AlignAfterOperator
