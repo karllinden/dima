@@ -27,10 +27,16 @@ static void system_free(struct dima *dima __attribute__((unused)), void *ptr) {
     free(ptr);
 }
 
+static void *system_calloc(struct dima *dima __attribute__((unused)),
+                           size_t nmemb,
+                           size_t size) {
+    return calloc(nmemb, size);
+}
+
 static const struct dima_vtable vtable = {
         system_malloc,
         system_free,
-        NULL, /* TODO */
+        system_calloc,
         NULL, /* TODO */
         NULL, /* TODO */
         NULL, /* TODO */

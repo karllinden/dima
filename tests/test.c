@@ -30,11 +30,25 @@ static void teardown(void) {
     /* Nothing to do. */
 }
 
-void add_test(Suite *suite, const char *name, TFun func) {
+static TCase *create_test(Suite *suite, const char *name) {
     TCase *tc = tcase_create(name);
     tcase_add_checked_fixture(tc, init_test_dima, teardown);
-    tcase_add_test(tc, func);
     suite_add_tcase(suite, tc);
+    return tc;
+}
+
+void add_test(Suite *suite, const char *name, TFun func) {
+    TCase *tc = create_test(suite, name);
+    tcase_add_test(tc, func);
+}
+
+void add_loop_test(Suite *suite,
+                   const char *name,
+                   TFun func,
+                   int start,
+                   int end) {
+    TCase *tc = create_test(suite, name);
+    tcase_add_loop_test(tc, func, start, end);
 }
 
 int main(int argc __attribute__((unused)), const char *argv[]) {

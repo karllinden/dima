@@ -68,6 +68,7 @@ if check.found()
   testlib = static_library(
     'testlib',
     [
+      'tests/powz.c',
       'tests/standard_tests.c',
       'tests/test.c'
     ],
@@ -75,6 +76,7 @@ if check.found()
 
   test_names = [
     'dima',
+    'powz',
     'system',
   ]
   foreach name : test_names

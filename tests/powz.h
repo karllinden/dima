@@ -14,29 +14,22 @@
  * limitations under the License.
  */
 
-#ifndef TEST_H
-#define TEST_H
+/* Functions to compute powers in the size_t type. */
 
-#include <check.h>
+#ifndef POWZ_H
+#define POWZ_H
 
-#include <dima/dima.h>
+#include <stddef.h>
 
-#define ADD_TEST(name) add_test(suite, #name, test_##name)
-#define ADD_LOOP_TEST(name, start, end) \
-    add_loop_test(suite, #name, test_##name, start, end)
+/* We assume a platform where a byte is 8 bits, although this is not required by
+ * C11 standard. */
+#define SIZE_BITS (sizeof(size_t) * 8)
 
-extern struct dima *test_dima;
+/* Returns 3^n (mod SIZE_MAX + 1). */
+size_t pow3z(size_t n);
 
-/* Provided by each of the test programs. */
-void init_test_dima(void);
-void add_tests(Suite *suite);
+/* Returns the multiplicative inverse of 3^n modulo SIZE_MAX + 1, i.e. the
+ * number such that pow3z(n) * pow3z_inv(n) == 1. */
+size_t pow3z_inv(size_t n);
 
-/* Provided by test.c. */
-void add_test(Suite *suite, const char *name, TFun func);
-void add_loop_test(Suite *suite,
-                   const char *name,
-                   TFun func,
-                   int start,
-                   int end);
-
-#endif /* !TEST_H */
+#endif /* !POWZ_H */
