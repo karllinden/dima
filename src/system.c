@@ -33,11 +33,17 @@ static void *system_calloc(struct dima *dima __attribute__((unused)),
     return calloc(nmemb, size);
 }
 
+static void *system_realloc(struct dima *dima __attribute__((unused)),
+                            void *ptr,
+                            size_t size) {
+    return realloc(ptr, size);
+}
+
 static const struct dima_vtable vtable = {
         system_malloc,
         system_free,
         system_calloc,
-        NULL, /* TODO */
+        system_realloc,
         NULL, /* TODO */
         NULL, /* TODO */
         NULL, /* TODO */
