@@ -24,9 +24,6 @@ libslotname = meson.project_name() + '-' + slot
 
 pkg = import('pkgconfig')
 
-cc = meson.get_compiler('c')
-host_system = host_machine.system()
-
 header_names = [
   'derived',
   'dima',
