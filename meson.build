@@ -30,6 +30,27 @@ else
   add_global_arguments('-DUNUSED=', language: 'c')
 endif
 
+prefix = '''
+#define _GNU_SOURCE
+#include <stdlib.h>
+#include <string.h>
+'''
+functions = ['reallocarray', 'strdup', 'strndup']
+have_any_function = false
+foreach function : functions
+  if cc.has_function(function, prefix: prefix)
+    have_any_function = true
+    value = '1'
+  else
+    value = '0'
+  endif
+  arg = '-DHAVE_' + function.to_upper() + '=' + value
+  add_global_arguments(arg, language: 'c')
+endforeach
+if have_any_function
+  add_global_arguments('-D_GNU_SOURCE', language: 'c')
+endif
+
 header_names = [
   'derived',
   'dima',
