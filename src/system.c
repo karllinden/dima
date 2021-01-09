@@ -37,13 +37,24 @@ static void *system_realloc(struct dima *dima UNUSED, void *ptr, size_t size) {
     return realloc(ptr, size);
 }
 
+#if HAVE_REALLOCARRAY
+static void *system_reallocarray(struct dima *dima UNUSED,
+                                 void *ptr,
+                                 size_t nmemb,
+                                 size_t size) {
+    return reallocarray(ptr, nmemb, size);
+}
+#else
+#define system_realloc dima_reallocarray_with_realloc
+#endif
+
 static const struct dima_vtable vtable = {
         system_malloc,
         system_free,
         system_calloc,
         system_realloc,
         dima_mallocarray_with_malloc,
-        NULL, /* TODO */
+        system_reallocarray,
         NULL, /* TODO */
         NULL, /* TODO */
 };

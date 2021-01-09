@@ -129,6 +129,10 @@ static void *test_mallocarray(const struct test_data *data) {
     return dima_mallocarray(test_dima, data->nmemb, data->size);
 }
 
+static void *test_reallocarray(const struct test_data *data) {
+    return dima_reallocarray(test_dima, data->ptr, data->nmemb, data->size);
+}
+
 static void test_works_when_size_0(struct test_data *data) {
     data->size = 0;
     void *ptr = call_function_under_test(data);
@@ -270,6 +274,7 @@ static const struct function functions[] = {
         {"calloc", test_calloc, ARRAY},
         {"realloc", test_realloc, REALLOC},
         {"mallocarray", test_mallocarray, ARRAY},
+        {"reallocarray", test_reallocarray, REALLOC | ARRAY},
 };
 #define N_FUNCTIONS (sizeof(functions) / sizeof(functions[0]))
 

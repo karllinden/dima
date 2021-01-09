@@ -38,4 +38,9 @@ void *dima_mallocarray_with_malloc(struct dima *dima,
                                    size_t nmemb,
                                    size_t size);
 
+void *dima_reallocarray_with_realloc(struct dima *dima,
+                                     void *ptr,
+                                     size_t nmemb,
+                                     size_t size);
+
 #endif /* !DIMA_DERIVED_H */

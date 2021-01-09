@@ -35,3 +35,13 @@ void *dima_mallocarray_with_malloc(struct dima *dima,
     }
     return dima_malloc(dima, nmemb * size);
 }
+
+void *dima_reallocarray_with_realloc(struct dima *dima,
+                                     void *ptr,
+                                     size_t nmemb,
+                                     size_t size) {
+    if (array_size_overflows(nmemb, size)) {
+        return NULL;
+    }
+    return dima_realloc(dima, ptr, nmemb * size);
+}
