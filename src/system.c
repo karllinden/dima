@@ -45,7 +45,7 @@ static void *system_reallocarray(struct dima *dima UNUSED,
     return reallocarray(ptr, nmemb, size);
 }
 #else
-#define system_realloc dima_reallocarray_with_realloc
+#define system_reallocarray dima_reallocarray_with_realloc
 #endif
 
 static const struct dima_vtable vtable = {
