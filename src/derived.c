@@ -22,7 +22,8 @@
 
 static inline int array_size_overflows(size_t nmemb, size_t size) {
     size_t bytes = nmemb * size;
-    return (nmemb >= SQRT_SIZE_MAX || size >= SQRT_SIZE_MAX)
+    return (nmemb >= SQRT_SIZE_MAX || size >= SQRT_SIZE_MAX) //
+           && nmemb > 0 //
            && (bytes / nmemb != size);
 }
 

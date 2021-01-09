@@ -184,6 +184,14 @@ static void test_returns_writable_array(struct test_data *data) {
     dima_free(test_dima, ptr);
 }
 
+static void test_works_when_nmemb_is_0(struct test_data *data) {
+    data->nmemb = 0;
+    data->size = SIZE_MAX;
+    void *ptr = call_function_under_test(data);
+    /* ptr may be NULL or non-NULL, but at least it should not crash. */
+    dima_free(test_dima, ptr);
+}
+
 static void test_returns_null_on_overflow(struct test_data *data) {
     int small_nmemb = data->param % 2;
     data->param /= 2;
@@ -277,6 +285,7 @@ static const struct test tests[] = {
         TEST(returns_null_on_failure, 0),
 
         TEST(returns_writable_array, ARRAY),
+        TEST(works_when_nmemb_is_0, ARRAY),
         LOOP_TEST(returns_null_on_overflow, ARRAY, 256),
 
         TEST(works_when_new_size_is_smaller, REALLOC),
