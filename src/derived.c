@@ -14,27 +14,23 @@
  * limitations under the License.
  */
 
-#include "src/size_bits.h"
+#include <dima/derived.h>
 
-#include "powz.h"
+#include "size_bits.h"
 
-#define ORDER_OF_3 (((size_t)1) << (SIZE_BITS - 2))
+#define SQRT_SIZE_MAX (((size_t)1) << (SIZE_BITS / 2))
 
-size_t pow3z(size_t n) {
-    size_t result = 1;
-    size_t p = 3;
-    while (n != 0) {
-        if (n % 2 != 0) {
-            result *= p;
-        }
-        p *= p;
-        n /= 2;
-    }
-    return result;
+static inline int array_size_overflows(size_t nmemb, size_t size) {
+    size_t bytes = nmemb * size;
+    return (nmemb >= SQRT_SIZE_MAX || size >= SQRT_SIZE_MAX)
+           && (bytes / nmemb != size);
 }
 
-size_t pow3z_inv(size_t n) {
-    size_t order = ORDER_OF_3;
-    n %= order;
-    return pow3z(order - n);
+void *dima_mallocarray_with_malloc(struct dima *dima,
+                                   size_t nmemb,
+                                   size_t size) {
+    if (array_size_overflows(nmemb, size)) {
+        return NULL;
+    }
+    return dima_malloc(dima, nmemb * size);
 }

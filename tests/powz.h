@@ -21,10 +21,6 @@
 
 #include <stddef.h>
 
-/* We assume a platform where a byte is 8 bits, although this is not required by
- * C11 standard. */
-#define SIZE_BITS (sizeof(size_t) * 8)
-
 /* Returns 3^n (mod SIZE_MAX + 1). */
 size_t pow3z(size_t n);
 

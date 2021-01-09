@@ -28,6 +28,7 @@ cc = meson.get_compiler('c')
 host_system = host_machine.system()
 
 header_names = [
+  'derived',
   'dima',
   'system',
 ]
@@ -41,6 +42,7 @@ incdirs = include_directories('include')
 
 sources = []
 source_names = [
+  'derived',
   'dima',
   'system',
 ]

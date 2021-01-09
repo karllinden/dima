@@ -16,6 +16,7 @@
 
 #include <stdlib.h>
 
+#include <dima/derived.h>
 #include <dima/system.h>
 
 static void *system_malloc(struct dima *dima __attribute__((unused)),
@@ -44,7 +45,7 @@ static const struct dima_vtable vtable = {
         system_free,
         system_calloc,
         system_realloc,
-        NULL, /* TODO */
+        dima_mallocarray_with_malloc,
         NULL, /* TODO */
         NULL, /* TODO */
         NULL, /* TODO */
