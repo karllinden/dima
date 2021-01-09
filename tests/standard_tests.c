@@ -186,7 +186,7 @@ static void test_returns_writable_array(struct test_data *data) {
 
 static void test_works_when_nmemb_is_0(struct test_data *data) {
     data->nmemb = 0;
-    data->size = SIZE_MAX;
+    data->size = SIZE_MAX / 4;
     void *ptr = call_function_under_test(data);
     /* ptr may be NULL or non-NULL, but at least it should not crash. */
     dima_free(test_dima, ptr);
