@@ -29,6 +29,10 @@ static inline int array_size_overflows(size_t nmemb, size_t size) {
            && (bytes / nmemb != size);
 }
 
+static inline size_t min_size(size_t a, size_t b) {
+    return a < b ? a : b;
+}
+
 void *dima_mallocarray_with_malloc(struct dima *dima,
                                    size_t nmemb,
                                    size_t size) {
@@ -53,6 +57,16 @@ char *dima_strdup_with_malloc(struct dima *dima, const char *s) {
     char *dup = dima_malloc(dima, size);
     if (dup != NULL) {
         memcpy(dup, s, size);
+    }
+    return dup;
+}
+
+char *dima_strndup_with_malloc(struct dima *dima, const char *s, size_t n) {
+    size_t len = min_size(strlen(s), n);
+    char *dup = dima_malloc(dima, len + 1);
+    if (dup != NULL) {
+        memcpy(dup, s, len);
+        dup[len] = '\0';
     }
     return dup;
 }

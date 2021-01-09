@@ -68,7 +68,7 @@
  * requirements.
  *
  * For examples of some implementations of this abstraction can see:
- *  + dima/system.h (TODO)
+ *  + dima/system.h
  *  + dima/env.h (TODO)
  *  + dima/derived.h (TODO)
  *  + dima/exiting_on_failure.h (TODO)

@@ -57,6 +57,14 @@ static char *system_strdup(struct dima *dima UNUSED, const char *s) {
 #define system_strdup dima_strdup_with_malloc
 #endif
 
+#if HAVE_STRNDUP
+static char *system_strndup(struct dima *dima UNUSED, const char *s, size_t n) {
+    return strndup(s, n);
+}
+#else
+#define system_strndup dima_strndup_with_malloc
+#endif
+
 static const struct dima_vtable vtable = {
         system_malloc,
         system_free,
@@ -65,7 +73,7 @@ static const struct dima_vtable vtable = {
         dima_mallocarray_with_malloc,
         system_reallocarray,
         system_strdup,
-        NULL, /* TODO */
+        system_strndup,
 };
 
 void dima_init_system(struct dima *dima) {

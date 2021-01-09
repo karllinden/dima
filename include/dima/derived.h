@@ -45,4 +45,6 @@ void *dima_reallocarray_with_realloc(struct dima *dima,
 
 char *dima_strdup_with_malloc(struct dima *dima, const char *s);
 
+char *dima_strndup_with_malloc(struct dima *dima, const char *s, size_t n);
+
 #endif /* !DIMA_DERIVED_H */

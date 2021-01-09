@@ -146,6 +146,71 @@ START_TEST(test_strdup_returns_writable_memory) {
 }
 END_TEST
 
+START_TEST(test_strndup_empty_0_works) {
+    char *s = dima_strndup(test_dima, "", 0);
+    ck_assert_ptr_ne(NULL, s);
+    ck_assert_str_eq("", s);
+    dima_free(test_dima, s);
+}
+END_TEST
+
+START_TEST(test_strndup_empty_1_works) {
+    char *s = dima_strndup(test_dima, "", 1);
+    ck_assert_ptr_ne(NULL, s);
+    ck_assert_str_eq("", s);
+    dima_free(test_dima, s);
+}
+END_TEST
+
+START_TEST(test_strndup_empty_2_works) {
+    char *s = dima_strndup(test_dima, "", 1);
+    ck_assert_ptr_ne(NULL, s);
+    ck_assert_str_eq("", s);
+    dima_free(test_dima, s);
+}
+END_TEST
+
+START_TEST(test_strndup_with_small_n_works) {
+    char *s = dima_strndup(test_dima, "What is love?", 6);
+    ck_assert_ptr_ne(NULL, s);
+    ck_assert_str_eq("What i", s);
+    dima_free(test_dima, s);
+}
+END_TEST
+
+START_TEST(test_strndup_with_exact_n_works) {
+    char *s = dima_strndup(test_dima, "Baby don't hurt me.", 19);
+    ck_assert_ptr_ne(NULL, s);
+    ck_assert_str_eq("Baby don't hurt me.", s);
+    dima_free(test_dima, s);
+}
+END_TEST
+
+START_TEST(test_strndup_with_large_n_works) {
+    char *s = dima_strndup(test_dima, "Don't hurt me.", 19);
+    ck_assert_ptr_ne(NULL, s);
+    ck_assert_str_eq("Don't hurt me.", s);
+    dima_free(test_dima, s);
+}
+END_TEST
+
+START_TEST(test_strndup_returns_new_pointer) {
+    const char *orig = "No more.";
+    char *s = dima_strndup(test_dima, orig, 16);
+    ck_assert_ptr_ne(orig, s);
+    dima_free(test_dima, s);
+}
+END_TEST
+
+START_TEST(test_strndup_returns_writable_memory) {
+    char *s = dima_strndup(test_dima, "Dododo", 4);
+    s[0] = 'G';
+    s[2] = 'g';
+    ck_assert_str_eq("Gogo", s);
+    dima_free(test_dima, s);
+}
+END_TEST
+
 static void *test_malloc(const struct test_data *data) {
     return dima_malloc(test_dima, data->size);
 }
@@ -479,6 +544,14 @@ void add_standard_tests(Suite *suite) {
     ADD_TEST(strdup_non_empty_works);
     ADD_TEST(strdup_returns_new_pointer);
     ADD_TEST(strdup_returns_writable_memory);
+    ADD_TEST(strndup_empty_0_works);
+    ADD_TEST(strndup_empty_1_works);
+    ADD_TEST(strndup_empty_2_works);
+    ADD_TEST(strndup_with_small_n_works);
+    ADD_TEST(strndup_with_exact_n_works);
+    ADD_TEST(strndup_with_large_n_works);
+    ADD_TEST(strndup_returns_new_pointer);
+    ADD_TEST(strndup_returns_writable_memory);
 
     for (size_t i = 0; i < N_FUNCTIONS; ++i) {
         for (size_t j = 0; j < N_TESTS; ++j) {
