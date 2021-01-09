@@ -19,24 +19,21 @@
 #include <dima/derived.h>
 #include <dima/system.h>
 
-static void *system_malloc(struct dima *dima __attribute__((unused)),
-                           size_t size) {
+static void *system_malloc(struct dima *dima UNUSED, size_t size) {
     return malloc(size);
 }
 
-static void system_free(struct dima *dima __attribute__((unused)), void *ptr) {
+static void system_free(struct dima *dima UNUSED, void *ptr) {
     free(ptr);
 }
 
-static void *system_calloc(struct dima *dima __attribute__((unused)),
+static void *system_calloc(struct dima *dima UNUSED,
                            size_t nmemb,
                            size_t size) {
     return calloc(nmemb, size);
 }
 
-static void *system_realloc(struct dima *dima __attribute__((unused)),
-                            void *ptr,
-                            size_t size) {
+static void *system_realloc(struct dima *dima UNUSED, void *ptr, size_t size) {
     return realloc(ptr, size);
 }
 

@@ -24,6 +24,12 @@ libslotname = meson.project_name() + '-' + slot
 
 pkg = import('pkgconfig')
 
+if cc.has_function_attribute('unused')
+  add_global_arguments('-DUNUSED=__attribute__((unused))', language: 'c')
+else
+  add_global_arguments('-DUNUSED=', language: 'c')
+endif
+
 header_names = [
   'derived',
   'dima',
