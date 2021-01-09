@@ -44,7 +44,6 @@ jobs:
         python-version: '3.x'
     - run: brew install gcc
       if: matrix.compiler == 'gcc'
-    - run: brew install check
     - run: pip install meson ninja
     - run: meson build --buildtype=${{ matrix.buildtype }} -Dtest=disabled
       env:
