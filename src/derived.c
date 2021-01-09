@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <string.h>
+
 #include <dima/derived.h>
 
 #include "size_bits.h"
@@ -44,4 +46,13 @@ void *dima_reallocarray_with_realloc(struct dima *dima,
         return NULL;
     }
     return dima_realloc(dima, ptr, nmemb * size);
+}
+
+char *dima_strdup_with_malloc(struct dima *dima, const char *s) {
+    size_t size = strlen(s) + 1;
+    char *dup = dima_malloc(dima, size);
+    if (dup != NULL) {
+        memcpy(dup, s, size);
+    }
+    return dup;
 }

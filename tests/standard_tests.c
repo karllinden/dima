@@ -113,6 +113,39 @@ START_TEST(test_calloced_memory_is_zeroed) {
 }
 END_TEST
 
+START_TEST(test_strdup_empty_works) {
+    char *s = dima_strdup(test_dima, "");
+    ck_assert_ptr_ne(NULL, s);
+    ck_assert_str_eq("", s);
+    dima_free(test_dima, s);
+}
+END_TEST
+
+START_TEST(test_strdup_non_empty_works) {
+    char *s = dima_strdup(test_dima, "The quick brown fox...");
+    ck_assert_ptr_ne(NULL, s);
+    ck_assert_str_eq("The quick brown fox...", s);
+    dima_free(test_dima, s);
+}
+END_TEST
+
+START_TEST(test_strdup_returns_new_pointer) {
+    const char *orig = "... jumps over the lazy dog.";
+    char *s = dima_strdup(test_dima, orig);
+    ck_assert_ptr_ne(orig, s);
+    dima_free(test_dima, s);
+}
+END_TEST
+
+START_TEST(test_strdup_returns_writable_memory) {
+    char *s = dima_strdup(test_dima, "Foobar");
+    s[2] = 'g';
+    s[5] = 'z';
+    ck_assert_str_eq("Fogbaz", s);
+    dima_free(test_dima, s);
+}
+END_TEST
+
 static void *test_malloc(const struct test_data *data) {
     return dima_malloc(test_dima, data->size);
 }
@@ -442,6 +475,10 @@ static void handle_instance(Suite *suite, struct instance *inst) {
 void add_standard_tests(Suite *suite) {
     ADD_TEST(free_null_works);
     ADD_TEST(calloced_memory_is_zeroed);
+    ADD_TEST(strdup_empty_works);
+    ADD_TEST(strdup_non_empty_works);
+    ADD_TEST(strdup_returns_new_pointer);
+    ADD_TEST(strdup_returns_writable_memory);
 
     for (size_t i = 0; i < N_FUNCTIONS; ++i) {
         for (size_t j = 0; j < N_TESTS; ++j) {
