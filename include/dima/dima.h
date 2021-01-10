@@ -76,7 +76,7 @@
  * For examples of some implementations of this abstraction can see:
  *  + dima/system.h
  *  + dima/env.h (TODO)
- *  + dima/derived.h (TODO)
+ *  + dima/derived.h
  *  + dima/exiting_on_failure.h (TODO)
  *  + dima/mutex_locked.h (TODO)
  *  + dima/spin_locked.h (TODO)
@@ -93,8 +93,8 @@
  * the the composed dima structure. All function pointers in the vtable must be
  * set to non-NULL values, and the pointed to functions must behave as described
  * above. To avoid re-implementing some functions, implementors can use
- * dima_init_vtable_with_realloc_and_free (TODO) and then set any extra
- * functions. See dima/derived.h.
+ * dima_init_derived_vtable and then set any extra functions. See
+ * dima/derived.h.
  *
  * Implementations should document whether or not they are safe for
  * multi-threaded use, because that is not required by this abstraction. As long

@@ -27,6 +27,13 @@
  * dima_x is the function being implemented and dima_y is the function used for
  * the implementation. For example dima_alloc_array_with_alloc implements
  * dima_alloc_array by using dima_alloc.
+ *
+ * The implementations do not depend on the concrete struct dima implementation,
+ * so clients can use any implementation of DIMA with the derived functions
+ * declared in this header.
+ *
+ * To create a complete implementation derived from implementations of free()
+ * and realloc(), use dima_init_derived_vtable().
  */
 
 #ifndef DIMA_DERIVED_H
@@ -34,9 +41,15 @@
 
 #include <dima/dima.h>
 
+void *dima_alloc_with_realloc(struct dima *dima, size_t size);
+
 void *dima_alloc0_with_alloc(struct dima *dima, size_t size);
 
 void *dima_alloc_array_with_alloc(struct dima *dima, size_t nmemb, size_t size);
+
+void *dima_alloc_array0_with_alloc_array(struct dima *dima,
+                                         size_t nmemb,
+                                         size_t size);
 
 void *dima_realloc_array_with_realloc(struct dima *dima,
                                       void *ptr,
@@ -46,5 +59,19 @@ void *dima_realloc_array_with_realloc(struct dima *dima,
 char *dima_strdup_with_alloc(struct dima *dima, const char *s);
 
 char *dima_strndup_with_alloc(struct dima *dima, const char *s, size_t n);
+
+/**
+ * Initializes the given vtable with a complete implementation derived from the
+ * given free and realloc functions.
+ *
+ * The derived functions do not depend on which type of DIMA is used.
+ *
+ * @param vtable the vtable to initialize
+ * @param free_fn the free() function
+ * @param realloc_fn the realloc() function
+ */
+void dima_init_derived_vtable(struct dima_vtable *vtable,
+                              dima_free_fn *free_fn,
+                              dima_realloc_fn *realloc_fn);
 
 #endif /* !DIMA_DERIVED_H */

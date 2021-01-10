@@ -101,6 +101,7 @@ if check.found()
     dependencies: [check, dima])
 
   test_names = [
+    'derived',
     'dima',
     'powz',
     'system',

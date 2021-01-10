@@ -174,4 +174,4 @@ int main(void) {
 It is possible to implement custom allocators outside DIMA.
 See the instructions in `include/dima/dima.h` for how to do that.
 See also the implementations that are part of this library, for example
-`src/exiting_on_failure.c` and `src/realloc_and_free.h`.
+`src/exiting_on_failure.c` and `src/derived.h`.
