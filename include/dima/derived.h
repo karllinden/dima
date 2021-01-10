@@ -20,13 +20,13 @@
  * Derived implementations of the DIMA functions.
  *
  * It is possible to implement some of the DIMA functions in terms of others.
- * For example dima_mallocarray can be implemented with dima_malloc. This header
+ * For example dima_alloc_array can be implemented with dima_alloc. This header
  * declares the derived implementations provided by the library.
  *
  * The naming convention for functions in this header is dima_x_with_y, where
  * dima_x is the function being implemented and dima_y is the function used for
- * the implementation. For example dima_mallocarray_with_malloc implements
- * dima_mallocarray by using dima_malloc.
+ * the implementation. For example dima_alloc_array_with_alloc implements
+ * dima_alloc_array by using dima_alloc.
  */
 
 #ifndef DIMA_DERIVED_H
@@ -34,17 +34,15 @@
 
 #include <dima/dima.h>
 
-void *dima_mallocarray_with_malloc(struct dima *dima,
-                                   size_t nmemb,
-                                   size_t size);
+void *dima_alloc_array_with_alloc(struct dima *dima, size_t nmemb, size_t size);
 
-void *dima_reallocarray_with_realloc(struct dima *dima,
-                                     void *ptr,
-                                     size_t nmemb,
-                                     size_t size);
+void *dima_realloc_array_with_realloc(struct dima *dima,
+                                      void *ptr,
+                                      size_t nmemb,
+                                      size_t size);
 
-char *dima_strdup_with_malloc(struct dima *dima, const char *s);
+char *dima_strdup_with_alloc(struct dima *dima, const char *s);
 
-char *dima_strndup_with_malloc(struct dima *dima, const char *s, size_t n);
+char *dima_strndup_with_alloc(struct dima *dima, const char *s, size_t n);
 
 #endif /* !DIMA_DERIVED_H */

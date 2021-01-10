@@ -23,10 +23,10 @@
 #include "powz.h"
 #include "test.h"
 
-/* Flag for calloc(), mallocarray() and reallocarray(). */
+/* Flag for the dima_*alloc_array* functions. */
 #define ARRAY 0x1
 
-/* Flag for realloc() and reallocarray(). */
+/* Flag for the dima_realloc* functions. */
 #define REALLOC 0x2
 
 /* Exclusive maximum value for the loop end of a test. */
@@ -34,8 +34,7 @@
 
 struct test_data;
 
-/* Generic interface to dima_malloc, dima_calloc, dima_realloc,
- * dima_reallocarray and dima_mallocarray. */
+/* Generic interface to the dima_*alloc*, functions. */
 typedef void *function_under_test_fn(const struct test_data *data);
 
 /* The type of the test functions. */
@@ -61,7 +60,7 @@ struct test {
  * An instance of a test, which is a pair of a function and a test to make on
  * that function.
  *
- * This is used to generate a good test name, such as malloc_with_size_0_works,
+ * This is used to generate a good test name, such as alloc_with_size_0_works,
  * or realloc_with_ptr_null_and_size_0_works.
  */
 struct instance {
@@ -104,8 +103,8 @@ START_TEST(test_free_null_works) {
 }
 END_TEST
 
-START_TEST(test_calloced_memory_is_zeroed) {
-    int *ints = dima_calloc(test_dima, 16, sizeof(int));
+START_TEST(test_memory_allocated_with_alloc_array0_is_zeroed) {
+    int *ints = dima_alloc_array0(test_dima, 16, sizeof(int));
     for (int i = 0; i < 16; ++i) {
         ck_assert_int_eq(0, ints[i]);
     }
@@ -211,24 +210,24 @@ START_TEST(test_strndup_returns_writable_memory) {
 }
 END_TEST
 
-static void *test_malloc(const struct test_data *data) {
-    return dima_malloc(test_dima, data->size);
-}
-
-static void *test_calloc(const struct test_data *data) {
-    return dima_calloc(test_dima, data->nmemb, data->size);
+static void *test_alloc(const struct test_data *data) {
+    return dima_alloc(test_dima, data->size);
 }
 
 static void *test_realloc(const struct test_data *data) {
     return dima_realloc(test_dima, data->ptr, data->size);
 }
 
-static void *test_mallocarray(const struct test_data *data) {
-    return dima_mallocarray(test_dima, data->nmemb, data->size);
+static void *test_alloc_array(const struct test_data *data) {
+    return dima_alloc_array(test_dima, data->nmemb, data->size);
 }
 
-static void *test_reallocarray(const struct test_data *data) {
-    return dima_reallocarray(test_dima, data->ptr, data->nmemb, data->size);
+static void *test_alloc_array0(const struct test_data *data) {
+    return dima_alloc_array0(test_dima, data->nmemb, data->size);
+}
+
+static void *test_realloc_array(const struct test_data *data) {
+    return dima_realloc_array(test_dima, data->ptr, data->nmemb, data->size);
 }
 
 static void test_works_when_size_0(struct test_data *data) {
@@ -326,7 +325,7 @@ static size_t min_size(size_t a, size_t b) {
 #define INITIAL_REALLOC_SIZE 27
 static void test_realloc_works(struct test_data *data, size_t new_size) {
     const char *s = "abcdefghijklmnopqrstuvwxyz";
-    char *ptr = dima_malloc(test_dima, INITIAL_REALLOC_SIZE);
+    char *ptr = dima_alloc(test_dima, INITIAL_REALLOC_SIZE);
     memcpy(ptr, s, INITIAL_REALLOC_SIZE);
 
     data->ptr = ptr;
@@ -354,7 +353,7 @@ static void test_works_when_new_size_is_larger(struct test_data *data) {
 
 static void test_allocates_additional_writable_memory(struct test_data *data) {
     const char *s = "abcdefghijklmnopqrstuvwxyz";
-    char *ptr = dima_malloc(test_dima, INITIAL_REALLOC_SIZE);
+    char *ptr = dima_alloc(test_dima, INITIAL_REALLOC_SIZE);
     memcpy(ptr, s, INITIAL_REALLOC_SIZE);
 
     data->ptr = ptr;
@@ -368,11 +367,11 @@ static void test_allocates_additional_writable_memory(struct test_data *data) {
 }
 
 static const struct function functions[] = {
-        {"malloc", test_malloc, 0},
-        {"calloc", test_calloc, ARRAY},
+        {"alloc", test_alloc, 0},
         {"realloc", test_realloc, REALLOC},
-        {"mallocarray", test_mallocarray, ARRAY},
-        {"reallocarray", test_reallocarray, REALLOC | ARRAY},
+        {"alloc_array", test_alloc_array, ARRAY},
+        {"alloc_array0", test_alloc_array0, ARRAY},
+        {"realloc_array", test_realloc_array, REALLOC | ARRAY},
 };
 #define N_FUNCTIONS (sizeof(functions) / sizeof(functions[0]))
 
@@ -539,7 +538,7 @@ static void handle_instance(Suite *suite, struct instance *inst) {
 
 void add_standard_tests(Suite *suite) {
     ADD_TEST(free_null_works);
-    ADD_TEST(calloced_memory_is_zeroed);
+    ADD_TEST(memory_allocated_with_alloc_array0_is_zeroed);
     ADD_TEST(strdup_empty_works);
     ADD_TEST(strdup_non_empty_works);
     ADD_TEST(strdup_returns_new_pointer);

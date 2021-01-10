@@ -54,7 +54,7 @@ mitigated.
 It has the price that the calls to `malloc()` to fault-inject must be made
 through some indirection, which implies both that some calls to `malloc()` must
 be updated and a performance penalty.
-In the case of DIMA, this amounts to calling `dima_malloc()` instead of
+In the case of DIMA, this amounts to calling `dima_alloc()` instead of
 `malloc()`.
 
 Dependency injection is the approach taken by many libraries, such as libcurl,
@@ -124,7 +124,7 @@ size_t *range(struct dima *dima, size_t max_exclusive) {
         return NULL;
     }
 
-    size_t *result = dima_mallocarray(dima, max_exlusive + 1, sizeof(*result));
+    size_t *result = dima_alloc_array(dima, max_exlusive + 1, sizeof(*result));
     if (result != NULL) {
         init_range(result, max_exclusive);
     }
@@ -132,8 +132,8 @@ size_t *range(struct dima *dima, size_t max_exclusive) {
 }
 ```
 
-The example also uses `dima_mallocarray(dima, nmemb, size)` which behaves like
-`dima_malloc(dima, nmemb * size)` but with an overflow check, similar to how the
+The example also uses `dima_alloc_array(dima, nmemb, size)` which behaves like
+`dima_alloc(dima, nmemb * size)` but with an overflow check, similar to how the
 non-standard `reallocarray()` function works.
 The above function can then be invoked with different memory allocators, for
 example using:

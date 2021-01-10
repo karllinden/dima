@@ -20,12 +20,12 @@
  * Declaration of the dependency-injectible memory allocator (DIMA) abtraction.
  *
  * The DIMA abstraction supports the following functions:
- *  + dima_malloc()
  *  + dima_free()
- *  + dima_calloc()
+ *  + dima_alloc()
  *  + dima_realloc()
- *  + dima_mallocarray()
- *  + dima_reallocarray()
+ *  + dima_alloc_array()
+ *  + dima_alloc_array0()
+ *  + dima_realloc_array()
  *  + dima_strdup()
  *  + dima_strndup().
  * The signatures of these functions are described in this header. They all take
@@ -34,24 +34,26 @@
  * on the implementation. (See for example dima_init_exiting_on_failure().) On
  * error these functions are not required to set the errno variable.
  *
- * The dima_malloc(), dima_calloc(), dima_realloc() behave as their C11 standard
- * library counterparts, except that the memory is allocated according to the
- * DIMA implementation and that they may exit on failure.
+ * The dima_alloc(), dima_realloc() and dima_alloc_array0() behave as malloc(),
+ * realloc() and calloc() from the C11 standard library, except that the memory
+ * is allocated according to the DIMA implementation and that they may exit on
+ * failure.
  *
  * The dima_free() function behaves as the C11 standard library free(), except
  * that it free's memory according to the DIMA implementation.
  *
- * dima_mallocarray() behaves as dima_calloc() except that the returned memory
- * is not initialized to zero.
+ * dima_alloc_array() behaves as dima_alloc_array0() except that the returned
+ * memory is not initialized to zero.
  *
- * The dima_reallocarray(), dima_strdup() and dima_strndup() functions behave as
- * their glibc counterparts, except that they allocate memory according to the
- * DIMA implementation, are not required to set errno on failure, and may exit
- * on failure. Unlike in glibc, dima_reallocarray(d, p, 0, 0) is not required to
- * be equivalent to dima_free(d, p).
+ * The dima_realloc_array(), dima_strdup() and dima_strndup() functions behave
+ * as their glibc counterparts reallocarray(), strdup() and strndup(), except
+ * that they allocate memory according to the DIMA implementation, are not
+ * required to set errno on failure, and may exit on failure. Unlike in glibc,
+ * dima_realloc_array(d, p, 0, 0) is not required to be equivalent to
+ * dima_free(d, p).
  *
- * The dima_calloc(), dima_mallocarray() and dima_reallocarray() fail if the
- * total size, nmemb * size, overflows.
+ * The dima_*alloc_array*() functions fail if the total size, nmemb * size,
+ * overflows.
  *
  * Implementations are free to make further guarantees that are not required by
  * this abstraction. For example an implementation may guarantees such as:
@@ -59,7 +61,7 @@
  *  + the functions never exit on failure
  *  + the functions always exit on failure
  *  + errno is always set on error
- *  + dima_malloc(d, 0) always returns non-NULL
+ *  + dima_alloc(d, 0) always returns non-NULL
  *  + dima_realloc(d, p, 0) behaves as dima_free(d, p)
  *  + etc.
  * Implementors should document any additional guarantees. See for example
@@ -105,32 +107,30 @@
 
 struct dima;
 
-typedef void *dima_malloc_fn(struct dima *dima, size_t size);
-
 typedef void dima_free_fn(struct dima *dima, void *ptr);
 
-typedef void *dima_calloc_fn(struct dima *dima, size_t nmemb, size_t size);
+typedef void *dima_alloc_fn(struct dima *dima, size_t size);
 
 typedef void *dima_realloc_fn(struct dima *dima, void *ptr, size_t size);
 
-typedef void *dima_mallocarray_fn(struct dima *dima, size_t nmemb, size_t size);
+typedef void *dima_alloc_array_fn(struct dima *dima, size_t nmemb, size_t size);
 
-typedef void *dima_reallocarray_fn(struct dima *dima,
-                                   void *ptr,
-                                   size_t nmemb,
-                                   size_t size);
+typedef void *dima_realloc_array_fn(struct dima *dima,
+                                    void *ptr,
+                                    size_t nmemb,
+                                    size_t size);
 
 typedef char *dima_strdup_fn(struct dima *dima, const char *s);
 
 typedef char *dima_strndup_fn(struct dima *dima, const char *s, size_t n);
 
 struct dima_vtable {
-    dima_malloc_fn *malloc_fn;
     dima_free_fn *free_fn;
-    dima_calloc_fn *calloc_fn;
+    dima_alloc_fn *alloc_fn;
     dima_realloc_fn *realloc_fn;
-    dima_mallocarray_fn *mallocarray_fn;
-    dima_reallocarray_fn *reallocarray_fn;
+    dima_alloc_array_fn *alloc_array_fn;
+    dima_alloc_array_fn *alloc_array0_fn;
+    dima_realloc_array_fn *realloc_array_fn;
     dima_strdup_fn *strdup_fn;
     dima_strndup_fn *strndup_fn;
 };
@@ -139,20 +139,20 @@ struct dima {
     const struct dima_vtable *vtable;
 };
 
-void *dima_malloc(struct dima *dima, size_t size);
-
 void dima_free(struct dima *dima, void *ptr);
 
-void *dima_calloc(struct dima *dima, size_t nmemb, size_t size);
+void *dima_alloc(struct dima *dima, size_t size);
 
 void *dima_realloc(struct dima *dima, void *ptr, size_t size);
 
-void *dima_mallocarray(struct dima *dima, size_t nmemb, size_t size);
+void *dima_alloc_array(struct dima *dima, size_t nmemb, size_t size);
 
-void *dima_reallocarray(struct dima *dima,
-                        void *ptr,
-                        size_t nmemb,
-                        size_t size);
+void *dima_alloc_array0(struct dima *dima, size_t nmemb, size_t size);
+
+void *dima_realloc_array(struct dima *dima,
+                         void *ptr,
+                         size_t nmemb,
+                         size_t size);
 
 char *dima_strdup(struct dima *dima, const char *s);
 

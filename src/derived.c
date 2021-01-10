@@ -33,37 +33,37 @@ static inline size_t min_size(size_t a, size_t b) {
     return a < b ? a : b;
 }
 
-void *dima_mallocarray_with_malloc(struct dima *dima,
-                                   size_t nmemb,
-                                   size_t size) {
+void *dima_alloc_array_with_alloc(struct dima *dima,
+                                  size_t nmemb,
+                                  size_t size) {
     if (array_size_overflows(nmemb, size)) {
         return NULL;
     }
-    return dima_malloc(dima, nmemb * size);
+    return dima_alloc(dima, nmemb * size);
 }
 
-void *dima_reallocarray_with_realloc(struct dima *dima,
-                                     void *ptr,
-                                     size_t nmemb,
-                                     size_t size) {
+void *dima_realloc_array_with_realloc(struct dima *dima,
+                                      void *ptr,
+                                      size_t nmemb,
+                                      size_t size) {
     if (array_size_overflows(nmemb, size)) {
         return NULL;
     }
     return dima_realloc(dima, ptr, nmemb * size);
 }
 
-char *dima_strdup_with_malloc(struct dima *dima, const char *s) {
+char *dima_strdup_with_alloc(struct dima *dima, const char *s) {
     size_t size = strlen(s) + 1;
-    char *dup = dima_malloc(dima, size);
+    char *dup = dima_alloc(dima, size);
     if (dup != NULL) {
         memcpy(dup, s, size);
     }
     return dup;
 }
 
-char *dima_strndup_with_malloc(struct dima *dima, const char *s, size_t n) {
+char *dima_strndup_with_alloc(struct dima *dima, const char *s, size_t n) {
     size_t len = min_size(strlen(s), n);
-    char *dup = dima_malloc(dima, len + 1);
+    char *dup = dima_alloc(dima, len + 1);
     if (dup != NULL) {
         memcpy(dup, s, len);
         dup[len] = '\0';

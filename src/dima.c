@@ -16,31 +16,31 @@
 
 #include <dima/dima.h>
 
-void *dima_malloc(struct dima *dima, size_t size) {
-    return dima->vtable->malloc_fn(dima, size);
-}
-
 void dima_free(struct dima *dima, void *ptr) {
     dima->vtable->free_fn(dima, ptr);
 }
 
-void *dima_calloc(struct dima *dima, size_t nmemb, size_t size) {
-    return dima->vtable->calloc_fn(dima, nmemb, size);
+void *dima_alloc(struct dima *dima, size_t size) {
+    return dima->vtable->alloc_fn(dima, size);
 }
 
 void *dima_realloc(struct dima *dima, void *ptr, size_t size) {
     return dima->vtable->realloc_fn(dima, ptr, size);
 }
 
-void *dima_mallocarray(struct dima *dima, size_t nmemb, size_t size) {
-    return dima->vtable->mallocarray_fn(dima, nmemb, size);
+void *dima_alloc_array(struct dima *dima, size_t nmemb, size_t size) {
+    return dima->vtable->alloc_array_fn(dima, nmemb, size);
 }
 
-void *dima_reallocarray(struct dima *dima,
-                        void *ptr,
-                        size_t nmemb,
-                        size_t size) {
-    return dima->vtable->reallocarray_fn(dima, ptr, nmemb, size);
+void *dima_alloc_array0(struct dima *dima, size_t nmemb, size_t size) {
+    return dima->vtable->alloc_array0_fn(dima, nmemb, size);
+}
+
+void *dima_realloc_array(struct dima *dima,
+                         void *ptr,
+                         size_t nmemb,
+                         size_t size) {
+    return dima->vtable->realloc_array_fn(dima, ptr, nmemb, size);
 }
 
 char *dima_strdup(struct dima *dima, const char *s) {
