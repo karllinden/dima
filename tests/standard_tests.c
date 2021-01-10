@@ -29,6 +29,9 @@
 /* Flag for the dima_realloc* functions. */
 #define REALLOC 0x2
 
+/* Flag for dima_alloc0 and dima_alloc_array0. */
+#define ZERO 0x4
+
 /* Exclusive maximum value for the loop end of a test. */
 #define MAX_LOOP_END 512
 
@@ -94,7 +97,7 @@ static void *call_function_under_test(const struct test_data *data);
  *
  * This is needed because check does not strdup() the test case names.
  */
-#define NAME_BUFFER_CAPACITY 2048
+#define NAME_BUFFER_CAPACITY 4096
 static char name_buffer[NAME_BUFFER_CAPACITY];
 static size_t name_buffer_size = 0;
 
@@ -212,6 +215,10 @@ END_TEST
 
 static void *test_alloc(const struct test_data *data) {
     return dima_alloc(test_dima, data->size);
+}
+
+static void *test_alloc0(const struct test_data *data) {
+    return dima_alloc0(test_dima, data->size);
 }
 
 static void *test_realloc(const struct test_data *data) {
@@ -366,11 +373,21 @@ static void test_allocates_additional_writable_memory(struct test_data *data) {
     dima_free(test_dima, new_ptr);
 }
 
+static void test_returns_zero_initialized_memory(struct test_data *data) {
+    data->size = 27;
+    unsigned char *buf = call_function_under_test(data);
+    for (int i = 0; i < 27; ++i) {
+        ck_assert_uint_eq(0, buf[i]);
+    }
+    dima_free(test_dima, buf);
+}
+
 static const struct function functions[] = {
         {"alloc", test_alloc, 0},
+        {"alloc0", test_alloc0, ZERO},
         {"realloc", test_realloc, REALLOC},
         {"alloc_array", test_alloc_array, ARRAY},
-        {"alloc_array0", test_alloc_array0, ARRAY},
+        {"alloc_array0", test_alloc_array0, ARRAY | ZERO},
         {"realloc_array", test_realloc_array, REALLOC | ARRAY},
 };
 #define N_FUNCTIONS (sizeof(functions) / sizeof(functions[0]))
@@ -394,6 +411,8 @@ static const struct test tests[] = {
         TEST(works_when_new_size_is_equal, REALLOC),
         TEST(works_when_new_size_is_larger, REALLOC),
         TEST(allocates_additional_writable_memory, REALLOC),
+
+        TEST(returns_zero_initialized_memory, ZERO),
 };
 #define N_TESTS (sizeof(tests) / sizeof(tests[0]))
 

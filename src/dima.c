@@ -24,6 +24,10 @@ void *dima_alloc(struct dima *dima, size_t size) {
     return dima->vtable->alloc_fn(dima, size);
 }
 
+void *dima_alloc0(struct dima *dima, size_t size) {
+    return dima->vtable->alloc0_fn(dima, size);
+}
+
 void *dima_realloc(struct dima *dima, void *ptr, size_t size) {
     return dima->vtable->realloc_fn(dima, ptr, size);
 }

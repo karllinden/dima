@@ -33,6 +33,14 @@ static inline size_t min_size(size_t a, size_t b) {
     return a < b ? a : b;
 }
 
+void *dima_alloc0_with_alloc(struct dima *dima, size_t size) {
+    void *ptr = dima_alloc(dima, size);
+    if (ptr != NULL) {
+        memset(ptr, 0, size);
+    }
+    return ptr;
+}
+
 void *dima_alloc_array_with_alloc(struct dima *dima,
                                   size_t nmemb,
                                   size_t size) {

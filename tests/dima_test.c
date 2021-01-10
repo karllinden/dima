@@ -21,6 +21,7 @@
 enum fake_function {
     FAKE_FREE,
     FAKE_ALLOC,
+    FAKE_ALLOC0,
     FAKE_REALLOC,
     FAKE_ALLOC_ARRAY,
     FAKE_ALLOC_ARRAY0,
@@ -55,6 +56,14 @@ static void *fake_alloc(struct dima *dima, size_t size) {
     struct fake *fake = (struct fake *)dima;
     fake->count++;
     fake->func = FAKE_ALLOC;
+    fake->size = size;
+    return fake_return;
+}
+
+static void *fake_alloc0(struct dima *dima, size_t size) {
+    struct fake *fake = (struct fake *)dima;
+    fake->count++;
+    fake->func = FAKE_ALLOC0;
     fake->size = size;
     return fake_return;
 }
@@ -119,6 +128,7 @@ static char *fake_strndup(struct dima *dima, const char *s, size_t n) {
 static const struct dima_vtable fake_vtable = {
         fake_free,
         fake_alloc,
+        fake_alloc0,
         fake_realloc,
         fake_alloc_array,
         fake_alloc_array0,
@@ -146,6 +156,15 @@ START_TEST(test_calls_alloc_fn) {
     ck_assert_int_eq(1, fake.count);
     ck_assert_int_eq(FAKE_ALLOC, fake.func);
     ck_assert_uint_eq(79, fake.size);
+    ck_assert_ptr_eq(fake_return, ret);
+}
+END_TEST
+
+START_TEST(test_calls_alloc0_fn) {
+    void *ret = dima_alloc0(test_dima, 154);
+    ck_assert_int_eq(1, fake.count);
+    ck_assert_int_eq(FAKE_ALLOC0, fake.func);
+    ck_assert_uint_eq(154, fake.size);
     ck_assert_ptr_eq(fake_return, ret);
 }
 END_TEST
@@ -222,6 +241,7 @@ void init_test_dima(void) {
 void add_tests(Suite *suite) {
     ADD_TEST(calls_free_fn);
     ADD_TEST(calls_alloc_fn);
+    ADD_TEST(calls_alloc0_fn);
     ADD_TEST(calls_realloc_fn);
     ADD_TEST(calls_alloc_array_fn);
     ADD_TEST(calls_alloc_array0_fn);

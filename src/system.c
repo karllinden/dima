@@ -68,6 +68,7 @@ static char *system_strndup(struct dima *dima UNUSED, const char *s, size_t n) {
 static const struct dima_vtable vtable = {
         system_free,
         system_malloc,
+        dima_alloc0_with_alloc,
         system_realloc,
         dima_alloc_array_with_alloc,
         system_calloc,

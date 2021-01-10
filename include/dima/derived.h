@@ -34,6 +34,8 @@
 
 #include <dima/dima.h>
 
+void *dima_alloc0_with_alloc(struct dima *dima, size_t size);
+
 void *dima_alloc_array_with_alloc(struct dima *dima, size_t nmemb, size_t size);
 
 void *dima_realloc_array_with_realloc(struct dima *dima,

@@ -22,6 +22,7 @@
  * The DIMA abstraction supports the following functions:
  *  + dima_free()
  *  + dima_alloc()
+ *  + dima_alloc0()
  *  + dima_realloc()
  *  + dima_alloc_array()
  *  + dima_alloc_array0()
@@ -51,6 +52,9 @@
  * required to set errno on failure, and may exit on failure. Unlike in glibc,
  * dima_realloc_array(d, p, 0, 0) is not required to be equivalent to
  * dima_free(d, p).
+ *
+ * The dima_alloc0() function behaves as dima_alloc() except that the returned
+ * memory is initialized to zero.
  *
  * The dima_*alloc_array*() functions fail if the total size, nmemb * size,
  * overflows.
@@ -127,6 +131,7 @@ typedef char *dima_strndup_fn(struct dima *dima, const char *s, size_t n);
 struct dima_vtable {
     dima_free_fn *free_fn;
     dima_alloc_fn *alloc_fn;
+    dima_alloc_fn *alloc0_fn;
     dima_realloc_fn *realloc_fn;
     dima_alloc_array_fn *alloc_array_fn;
     dima_alloc_array_fn *alloc_array0_fn;
@@ -142,6 +147,8 @@ struct dima {
 void dima_free(struct dima *dima, void *ptr);
 
 void *dima_alloc(struct dima *dima, size_t size);
+
+void *dima_alloc0(struct dima *dima, size_t size);
 
 void *dima_realloc(struct dima *dima, void *ptr, size_t size);
 
