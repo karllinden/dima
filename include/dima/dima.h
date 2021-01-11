@@ -32,8 +32,10 @@
  * The signatures of these functions are described in this header. They all take
  * the struct dima * implementation as their first argument, which is not
  * allowed to be NULL. On error these functions return NULL or exit, depending
- * on the implementation. (See for example dima_init_exiting_on_failure().) On
- * error these functions are not required to set the errno variable.
+ * on the implementation. See for example dima_init_exiting_on_failure().)
+ *
+ * The functions in this header are not required to set errno on failure. This
+ * can be achieved by using dima_init_with_failure_hook().
  *
  * The dima_alloc(), dima_realloc() and dima_alloc_array0() behave as malloc(),
  * realloc() and calloc() from the C11 standard library, except that the memory
@@ -78,6 +80,7 @@
  *  + dima/env.h (TODO)
  *  + dima/derived.h
  *  + dima/exiting_on_failure.h (TODO)
+ *  + dima/failure_hook.h
  *  + dima/mutex_locked.h (TODO)
  *  + dima/spin_locked.h (TODO)
  *  + dima/thread_local.h (TODO)
