@@ -24,11 +24,16 @@ libslotname = meson.project_name() + '-' + slot
 
 pkg = import('pkgconfig')
 
-if cc.has_function_attribute('unused')
-  add_global_arguments('-DUNUSED=__attribute__((unused))', language: 'c')
-else
-  add_global_arguments('-DUNUSED=', language: 'c')
-endif
+attributes = ['cold', 'unused']
+foreach attribute : attributes
+  if cc.has_function_attribute(attribute)
+    value = '__attribute__((' + attribute + '))'
+  else
+    value = ''
+  endif
+  define = attribute.to_upper()
+  add_global_arguments('-D' + define + '=' + value, language: 'c')
+endforeach
 
 prefix = '''
 #define _GNU_SOURCE
@@ -54,6 +59,8 @@ endif
 header_names = [
   'derived',
   'dima',
+  'failing',
+  'failure_hook',
   'system',
 ]
 headers = []
@@ -68,6 +75,8 @@ sources = []
 source_names = [
   'derived',
   'dima',
+  'failing',
+  'failure_hook',
   'system',
 ]
 foreach source_name : source_names
@@ -104,6 +113,7 @@ if check.found()
   test_names = [
     'derived',
     'dima',
+    'failure_hook',
     'powz',
     'system',
   ]
