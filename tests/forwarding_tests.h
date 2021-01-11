@@ -14,16 +14,41 @@
  * limitations under the License.
  */
 
+/* Re-usable tests that assert that the test_dima forwards to the forwardee. */
+
+#ifndef FORWARDING_TESTS_H
+#define FORWARDING_TESTS_H
+
+#include <check.h>
+
 #include <dima/dima.h>
 
-#include "forwarding_tests.h"
-#include "test.h"
+enum fake_function {
+    FAKE_FREE,
+    FAKE_ALLOC,
+    FAKE_ALLOC0,
+    FAKE_REALLOC,
+    FAKE_ALLOC_ARRAY,
+    FAKE_ALLOC_ARRAY0,
+    FAKE_REALLOC_ARRAY,
+    FAKE_STRDUP,
+    FAKE_STRNDUP,
+};
 
-void init_test_dima(void) {
-    init_forwardee();
-    test_dima = &forwardee.dima;
-}
+struct fake {
+    struct dima dima;
+    int count;
+    enum fake_function func;
+    void *ptr;
+    size_t nmemb;
+    size_t size;
+    const char *s;
+    size_t n;
+};
 
-void add_tests(Suite *suite) {
-    add_forwarding_tests(suite);
-}
+struct fake forwardee;
+
+void init_forwardee(void);
+void add_forwarding_tests(Suite *suite);
+
+#endif /* !FORWARDING_TESTS_H */

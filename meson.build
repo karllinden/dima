@@ -94,6 +94,7 @@ if check.found()
   testlib = static_library(
     'testlib',
     [
+      'tests/forwarding_tests.c',
       'tests/powz.c',
       'tests/standard_tests.c',
       'tests/test.c'
