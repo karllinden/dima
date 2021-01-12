@@ -24,16 +24,17 @@ static void COLD call_failure_hook(const struct dima_with_failure_hook *impl) {
     impl->hook(impl->ptr);
 }
 
-static void failure_hook_free(struct dima *dima, void *ptr) {
-    struct dima_with_failure_hook *impl = downcast(dima);
-    dima_free(impl->next, ptr);
-}
-
-static void *handle_result(struct dima_with_failure_hook *impl, void *result) {
+static inline void *handle_result(struct dima_with_failure_hook *impl,
+                                  void *result) {
     if (result == NULL) {
         call_failure_hook(impl);
     }
     return result;
+}
+
+static void failure_hook_free(struct dima *dima, void *ptr) {
+    struct dima_with_failure_hook *impl = downcast(dima);
+    dima_free(impl->next, ptr);
 }
 
 static void *failure_hook_alloc(struct dima *dima, size_t size) {
