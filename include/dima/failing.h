@@ -16,7 +16,7 @@
 
 /*
  * dima/failing.h
- * -------------------
+ * --------------
  * A DIMA implementation that fails unconditionally, which is useful for
  * testing.
  *

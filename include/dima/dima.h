@@ -85,7 +85,7 @@
  *  + dima/spin_locked.h (TODO)
  *  + dima/thread_local.h (TODO)
  *  + dima/notifying.h (TODO)
- *  + dima/failing.h (TODO)
+ *  + dima/failing.h
  *  + dima/eventually_failing.h (TODO)
  *  + dima/randomly_failing.h (TODO)
  *
