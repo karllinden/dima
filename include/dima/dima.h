@@ -31,8 +31,13 @@
  *  + dima_strndup().
  * The signatures of these functions are described in this header. They all take
  * the struct dima * implementation as their first argument, which is not
- * allowed to be NULL. On error these functions return NULL or exit, depending
- * on the implementation. See for example dima_init_exiting_on_failure().)
+ * allowed to be NULL.
+ *
+ * On error the functions in this header return NULL or exit, depending on the
+ * implementation. Implementations are required to set the DIMA_EXITS_ON_FAILURE
+ * flag in dima->flags if and only if the implementation exits on failure. The
+ * flag can be queried with dima_exits_on_failure(). See
+ * dima_init_exiting_on_failure() for an implementation that exits on failure.
  *
  * The functions in this header are not required to set errno on failure. This
  * can be achieved by using dima_init_with_failure_hook().
@@ -79,7 +84,7 @@
  *  + dima/system.h
  *  + dima/env.h (TODO)
  *  + dima/derived.h
- *  + dima/exiting_on_failure.h (TODO)
+ *  + dima/exiting_on_failure.h
  *  + dima/failure_hook.h
  *  + dima/mutex_locked.h (TODO)
  *  + dima/spin_locked.h (TODO)
@@ -111,6 +116,12 @@
 #define DIMA_DIMA_H
 
 #include <stddef.h>
+
+/**
+ * Flag that should be set in dima->flags if and only if the implementation
+ * exits on failure.
+ */
+#define DIMA_EXITS_ON_FAILURE (1u << 0)
 
 struct dima;
 
@@ -145,6 +156,7 @@ struct dima_vtable {
 
 struct dima {
     const struct dima_vtable *vtable;
+    unsigned flags;
 };
 
 void dima_free(struct dima *dima, void *ptr);
@@ -159,5 +171,17 @@ void *dima_realloc_array(struct dima *dima,
                          size_t size);
 char *dima_strdup(struct dima *dima, const char *s);
 char *dima_strndup(struct dima *dima, const char *s, size_t n);
+
+/**
+ * Returns non-zero if and only if the implementation exits on failure.
+ *
+ * DIMA implementations must declare whether or not they exit on failure by
+ * setting DIMA_EXITS_ON_FAILURE in dima->flags appropriately.
+ *
+ * Prefer this function over checking dima->flags directly.
+ */
+static inline int dima_exits_on_failure(const struct dima *dima) {
+    return dima->flags & DIMA_EXITS_ON_FAILURE;
+}
 
 #endif /* !DIMA_DIMA_H */

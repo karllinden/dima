@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <dima/exiting_on_failure.h>
 #include <dima/failing.h>
 #include <dima/failure_hook.h>
 #include <dima/system.h>
@@ -91,6 +92,20 @@ static function_under_test_fn *functions[] = {
         test_strndup,
 };
 
+START_TEST(test_exits_on_failure_if_next_does) {
+    struct dima_exiting_on_failure deof;
+    dima_init_exiting_on_failure(&deof, &failing, 77);
+    dima_init_with_failure_hook(
+            &instance, dima_from_exiting_on_failure(&deof), my_hook, &my_data);
+    ck_assert_int_ne(0, dima_exits_on_failure(test_dima));
+}
+END_TEST
+
+START_TEST(test_does_not_exit_on_failure_if_next_does_not) {
+    ck_assert_int_eq(0, dima_exits_on_failure(test_dima));
+}
+END_TEST
+
 START_TEST(test_calls_hook_on_failure) {
     function_under_test_fn *function = functions[_i];
     make_failing();
@@ -103,5 +118,7 @@ END_TEST
 void add_tests(Suite *suite) {
     add_forwarding_tests(suite);
     int n_functions = sizeof(functions) / sizeof(*functions);
+    ADD_TEST(exits_on_failure_if_next_does);
+    ADD_TEST(does_not_exit_on_failure_if_next_does_not);
     ADD_LOOP_TEST(calls_hook_on_failure, 0, n_functions);
 }

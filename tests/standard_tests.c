@@ -101,6 +101,12 @@ static void *call_function_under_test(const struct test_data *data);
 static char name_buffer[NAME_BUFFER_CAPACITY];
 static size_t name_buffer_size = 0;
 
+/* The tests in this header break if the implementation exits on failure. */
+START_TEST(test_does_not_exit_on_failure) {
+    ck_assert_int_eq(0, dima_exits_on_failure(test_dima));
+}
+END_TEST
+
 START_TEST(test_free_null_works) {
     dima_free(test_dima, NULL);
 }
@@ -556,6 +562,7 @@ static void handle_instance(Suite *suite, struct instance *inst) {
 }
 
 void add_standard_tests(Suite *suite) {
+    ADD_TEST(does_not_exit_on_failure);
     ADD_TEST(free_null_works);
     ADD_TEST(memory_allocated_with_alloc_array0_is_zeroed);
     ADD_TEST(strdup_empty_works);

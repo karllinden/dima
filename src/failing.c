@@ -67,4 +67,5 @@ static const struct dima_vtable failing_vtable = {
 
 void dima_init_failing(struct dima *dima) {
     dima->vtable = &failing_vtable;
+    dima->flags = 0;
 }

@@ -59,6 +59,7 @@ endif
 header_names = [
   'derived',
   'dima',
+  'exiting_on_failure',
   'failing',
   'failure_hook',
   'system',
@@ -75,6 +76,7 @@ sources = []
 source_names = [
   'derived',
   'dima',
+  'exiting_on_failure',
   'failing',
   'failure_hook',
   'system',
@@ -113,6 +115,7 @@ if check.found()
   test_names = [
     'derived',
     'dima',
+    'exiting_on_failure',
     'failure_hook',
     'powz',
     'system',
