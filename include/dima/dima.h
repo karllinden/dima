@@ -148,24 +148,16 @@ struct dima {
 };
 
 void dima_free(struct dima *dima, void *ptr);
-
 void *dima_alloc(struct dima *dima, size_t size);
-
 void *dima_alloc0(struct dima *dima, size_t size);
-
 void *dima_realloc(struct dima *dima, void *ptr, size_t size);
-
 void *dima_alloc_array(struct dima *dima, size_t nmemb, size_t size);
-
 void *dima_alloc_array0(struct dima *dima, size_t nmemb, size_t size);
-
 void *dima_realloc_array(struct dima *dima,
                          void *ptr,
                          size_t nmemb,
                          size_t size);
-
 char *dima_strdup(struct dima *dima, const char *s);
-
 char *dima_strndup(struct dima *dima, const char *s, size_t n);
 
 #endif /* !DIMA_DIMA_H */
