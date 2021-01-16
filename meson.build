@@ -89,7 +89,7 @@ pkg.generate(
   lib,
   name: slotname,
   subdirs: slotname,
-  description: meson.project_name())
+  description: 'Dependency injectable memory allocator')
 
 check = dependency('check', required: get_option('test'))
 if check.found()
