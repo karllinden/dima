@@ -22,28 +22,12 @@
 #include <check.h>
 
 #include <dima/dima.h>
-
-enum fake_function {
-    FAKE_FREE,
-    FAKE_ALLOC,
-    FAKE_ALLOC0,
-    FAKE_REALLOC,
-    FAKE_ALLOC_ARRAY,
-    FAKE_ALLOC_ARRAY0,
-    FAKE_REALLOC_ARRAY,
-    FAKE_STRDUP,
-    FAKE_STRNDUP,
-};
+#include <dima/proxy/invocation.h>
 
 struct fake {
     struct dima dima;
     int count;
-    enum fake_function func;
-    void *ptr;
-    size_t nmemb;
-    size_t size;
-    const char *s;
-    size_t n;
+    struct dima_invocation invocation;
 };
 
 struct fake forwardee;

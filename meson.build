@@ -23,7 +23,7 @@ slotname = name + '-' + slot
 
 pkg = import('pkgconfig')
 
-attributes = ['cold', 'unused']
+attributes = ['cold', 'noreturn', 'unused']
 foreach attribute : attributes
   if cc.has_function_attribute(attribute)
     value = '__attribute__((' + attribute + '))'
@@ -63,6 +63,8 @@ install_headers(
     'include/dima/failing.h',
     'include/dima/failure_hook.h',
     'include/dima/system.h',
+
+    'include/dima/proxy/invocation.h',
   ],
   subdir: join_paths(slotname, name))
 
@@ -91,6 +93,27 @@ pkg.generate(
   subdirs: slotname,
   description: 'Dependency injectable memory allocator')
 
+proxy_slotname = name + '-proxy-' + slot
+proxy_lib = library(
+  proxy_slotname,
+  [
+    'src/proxy/invocation.c'
+  ],
+  include_directories: incdirs,
+  install: true,
+  dependencies: dima)
+
+dima_proxy = declare_dependency(
+  link_with: proxy_lib,
+  include_directories: incdirs,
+  dependencies: dima)
+
+pkg.generate(
+  proxy_lib,
+  name: proxy_slotname,
+  subdirs: slotname,
+  description: 'Proxy DIMA implementations')
+
 check = dependency('check', required: get_option('test'))
 if check.found()
   testlib = static_library(
@@ -116,7 +139,7 @@ if check.found()
     exe = executable(
       name + '_test',
       test_source,
-      dependencies: [check, dima],
+      dependencies: [check, dima_proxy],
       link_with: testlib)
     test(name, exe)
   endforeach

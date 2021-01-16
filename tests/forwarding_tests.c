@@ -23,50 +23,41 @@ static char fake_return[3];
 static void fake_free(struct dima *dima, void *ptr) {
     struct fake *fake = (struct fake *)dima;
     fake->count++;
-    fake->func = FAKE_FREE;
-    fake->ptr = ptr;
+    dima_init_free_invocation(&fake->invocation, ptr);
 }
 
 static void *fake_alloc(struct dima *dima, size_t size) {
     struct fake *fake = (struct fake *)dima;
     fake->count++;
-    fake->func = FAKE_ALLOC;
-    fake->size = size;
+    dima_init_alloc_invocation(&fake->invocation, size);
     return fake_return;
 }
 
 static void *fake_alloc0(struct dima *dima, size_t size) {
     struct fake *fake = (struct fake *)dima;
     fake->count++;
-    fake->func = FAKE_ALLOC0;
-    fake->size = size;
+    dima_init_alloc0_invocation(&fake->invocation, size);
     return fake_return;
 }
 
 static void *fake_realloc(struct dima *dima, void *ptr, size_t size) {
     struct fake *fake = (struct fake *)dima;
     fake->count++;
-    fake->func = FAKE_REALLOC;
-    fake->ptr = ptr;
-    fake->size = size;
+    dima_init_realloc_invocation(&fake->invocation, ptr, size);
     return fake_return;
 }
 
 static void *fake_alloc_array(struct dima *dima, size_t nmemb, size_t size) {
     struct fake *fake = (struct fake *)dima;
     fake->count++;
-    fake->func = FAKE_ALLOC_ARRAY;
-    fake->nmemb = nmemb;
-    fake->size = size;
+    dima_init_alloc_array_invocation(&fake->invocation, nmemb, size);
     return fake_return;
 }
 
 static void *fake_alloc_array0(struct dima *dima, size_t nmemb, size_t size) {
     struct fake *fake = (struct fake *)dima;
     fake->count++;
-    fake->func = FAKE_ALLOC_ARRAY0;
-    fake->nmemb = nmemb;
-    fake->size = size;
+    dima_init_alloc_array0_invocation(&fake->invocation, nmemb, size);
     return fake_return;
 }
 
@@ -76,27 +67,21 @@ static void *fake_realloc_array(struct dima *dima,
                                 size_t size) {
     struct fake *fake = (struct fake *)dima;
     fake->count++;
-    fake->func = FAKE_REALLOC_ARRAY;
-    fake->ptr = ptr;
-    fake->nmemb = nmemb;
-    fake->size = size;
+    dima_init_realloc_array_invocation(&fake->invocation, ptr, nmemb, size);
     return fake_return;
 }
 
 static char *fake_strdup(struct dima *dima, const char *s) {
     struct fake *fake = (struct fake *)dima;
     fake->count++;
-    fake->func = FAKE_STRDUP;
-    fake->s = s;
+    dima_init_strdup_invocation(&fake->invocation, s);
     return fake_return;
 }
 
 static char *fake_strndup(struct dima *dima, const char *s, size_t n) {
     struct fake *fake = (struct fake *)dima;
     fake->count++;
-    fake->func = FAKE_STRNDUP;
-    fake->s = s;
-    fake->n = n;
+    dima_init_strndup_invocation(&fake->invocation, s, n);
     return fake_return;
 }
 
@@ -117,94 +102,80 @@ static void fake_init(struct fake *fake) {
     fake->count = 0;
 }
 
+static void test_invocation(const struct dima_invocation *inv) {
+    void *ret = dima_invoke(test_dima, inv);
+    ck_assert_int_eq(1, forwardee.count);
+    ck_assert_int_eq(0, dima_compare_invocations(&forwardee.invocation, inv));
+    if (inv->function != DIMA_FREE) {
+        ck_assert_ptr_eq(fake_return, ret);
+    }
+}
+
 START_TEST(test_calls_free_fn) {
     int x;
-    dima_free(test_dima, &x);
-    ck_assert_int_eq(1, forwardee.count);
-    ck_assert_int_eq(FAKE_FREE, forwardee.func);
-    ck_assert_ptr_eq(&x, forwardee.ptr);
+    struct dima_invocation inv;
+    dima_init_free_invocation(&inv, &x);
+    test_invocation(&inv);
 }
 END_TEST
 
 START_TEST(test_calls_alloc_fn) {
-    void *ret = dima_alloc(test_dima, 79);
-    ck_assert_int_eq(1, forwardee.count);
-    ck_assert_int_eq(FAKE_ALLOC, forwardee.func);
-    ck_assert_uint_eq(79, forwardee.size);
-    ck_assert_ptr_eq(fake_return, ret);
+    struct dima_invocation inv;
+    dima_init_alloc_invocation(&inv, 79);
+    test_invocation(&inv);
 }
 END_TEST
 
 START_TEST(test_calls_alloc0_fn) {
-    void *ret = dima_alloc0(test_dima, 154);
-    ck_assert_int_eq(1, forwardee.count);
-    ck_assert_int_eq(FAKE_ALLOC0, forwardee.func);
-    ck_assert_uint_eq(154, forwardee.size);
-    ck_assert_ptr_eq(fake_return, ret);
+    struct dima_invocation inv;
+    dima_init_alloc0_invocation(&inv, 154);
+    test_invocation(&inv);
 }
 END_TEST
 
 START_TEST(test_calls_realloc_fn) {
     int x;
-    void *ret = dima_realloc(test_dima, &x, 1462);
-    ck_assert_int_eq(1, forwardee.count);
-    ck_assert_int_eq(FAKE_REALLOC, forwardee.func);
-    ck_assert_ptr_eq(&x, forwardee.ptr);
-    ck_assert_uint_eq(1462, forwardee.size);
-    ck_assert_ptr_eq(fake_return, ret);
+    struct dima_invocation inv;
+    dima_init_realloc_invocation(&inv, &x, 1462);
+    test_invocation(&inv);
 }
 END_TEST
 
 START_TEST(test_calls_alloc_array_fn) {
-    void *ret = dima_alloc_array(test_dima, 148, 962);
-    ck_assert_int_eq(1, forwardee.count);
-    ck_assert_int_eq(FAKE_ALLOC_ARRAY, forwardee.func);
-    ck_assert_uint_eq(148, forwardee.nmemb);
-    ck_assert_uint_eq(962, forwardee.size);
-    ck_assert_ptr_eq(fake_return, ret);
+    struct dima_invocation inv;
+    dima_init_alloc_array_invocation(&inv, 148, 962);
+    test_invocation(&inv);
 }
 END_TEST
 
 START_TEST(test_calls_alloc_array0_fn) {
-    void *ret = dima_alloc_array0(test_dima, 789, 654);
-    ck_assert_int_eq(1, forwardee.count);
-    ck_assert_int_eq(FAKE_ALLOC_ARRAY0, forwardee.func);
-    ck_assert_uint_eq(789, forwardee.nmemb);
-    ck_assert_uint_eq(654, forwardee.size);
-    ck_assert_ptr_eq(fake_return, ret);
+    struct dima_invocation inv;
+    dima_init_alloc_array0_invocation(&inv, 789, 654);
+    test_invocation(&inv);
 }
 END_TEST
 
 START_TEST(test_calls_realloc_array_fn) {
     int x;
-    void *ret = dima_realloc_array(test_dima, &x, 975, 135);
-    ck_assert_int_eq(1, forwardee.count);
-    ck_assert_int_eq(FAKE_REALLOC_ARRAY, forwardee.func);
-    ck_assert_ptr_eq(&x, forwardee.ptr);
-    ck_assert_uint_eq(975, forwardee.nmemb);
-    ck_assert_uint_eq(135, forwardee.size);
-    ck_assert_ptr_eq(fake_return, ret);
+    struct dima_invocation inv;
+    dima_init_realloc_array_invocation(&inv, &x, 975, 135);
+    test_invocation(&inv);
 }
 END_TEST
 
 START_TEST(test_calls_strdup_fn) {
     const char *s = "Hello";
-    char *ret = dima_strdup(test_dima, s);
-    ck_assert_int_eq(1, forwardee.count);
-    ck_assert_int_eq(FAKE_STRDUP, forwardee.func);
-    ck_assert_ptr_eq(s, forwardee.s);
-    ck_assert_ptr_eq(fake_return, ret);
+    struct dima_invocation inv;
+    dima_init_strdup_invocation(&inv, s);
+    test_invocation(&inv);
 }
 END_TEST
 
 START_TEST(test_calls_strndup_fn) {
     const char *s = "Goodbye";
-    char *ret = dima_strndup(test_dima, s, 4);
-    ck_assert_int_eq(1, forwardee.count);
-    ck_assert_int_eq(FAKE_STRNDUP, forwardee.func);
-    ck_assert_ptr_eq(s, forwardee.s);
-    ck_assert_uint_eq(4, forwardee.n);
-    ck_assert_ptr_eq(fake_return, ret);
+    struct dima_invocation inv;
+    dima_init_strndup_invocation(&inv, s, 4);
+    test_invocation(&inv);
 }
 END_TEST
 

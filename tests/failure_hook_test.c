@@ -17,12 +17,11 @@
 #include <dima/exiting_on_failure.h>
 #include <dima/failing.h>
 #include <dima/failure_hook.h>
+#include <dima/proxy/invocation.h>
 #include <dima/system.h>
 
 #include "forwarding_tests.h"
 #include "test.h"
-
-typedef void *function_under_test_fn(void);
 
 static struct dima failing;
 static struct dima_with_failure_hook instance;
@@ -49,48 +48,19 @@ void init_test_dima(void) {
     test_dima = dima_from_with_failure_hook(&instance);
 }
 
-static void *test_alloc(void) {
-    return dima_alloc(test_dima, 8);
-}
+#define N_INVOCATIONS 8
+static struct dima_invocation invocations[N_INVOCATIONS];
 
-static void *test_alloc0(void) {
-    return dima_alloc0(test_dima, 40);
+static void init_invocations(void) {
+    dima_init_alloc_invocation(invocations + 0, 8);
+    dima_init_alloc0_invocation(invocations + 1, 40);
+    dima_init_realloc_invocation(invocations + 2, NULL, 20);
+    dima_init_alloc_array_invocation(invocations + 3, 23, 25);
+    dima_init_alloc_array0_invocation(invocations + 4, 12, 21);
+    dima_init_realloc_array_invocation(invocations + 5, NULL, 89, 50);
+    dima_init_strdup_invocation(invocations + 6, "Hello!");
+    dima_init_strndup_invocation(invocations + 7, "Goodbye!", 6);
 }
-
-static void *test_realloc(void) {
-    return dima_realloc(test_dima, NULL, 20);
-}
-
-static void *test_alloc_array(void) {
-    return dima_alloc_array(test_dima, 23, 25);
-}
-
-static void *test_alloc_array0(void) {
-    return dima_alloc_array0(test_dima, 12, 21);
-}
-
-static void *test_realloc_array(void) {
-    return dima_realloc_array(test_dima, NULL, 89, 50);
-}
-
-static void *test_strdup(void) {
-    return dima_strdup(test_dima, "Hello!");
-}
-
-static void *test_strndup(void) {
-    return dima_strndup(test_dima, "Goodbye!", 6);
-}
-
-static function_under_test_fn *functions[] = {
-        test_alloc,
-        test_alloc0,
-        test_realloc,
-        test_alloc_array,
-        test_alloc_array0,
-        test_realloc_array,
-        test_strdup,
-        test_strndup,
-};
 
 START_TEST(test_exits_on_failure_if_next_does) {
     struct dima_exiting_on_failure deof;
@@ -107,9 +77,9 @@ START_TEST(test_does_not_exit_on_failure_if_next_does_not) {
 END_TEST
 
 START_TEST(test_calls_hook_on_failure) {
-    function_under_test_fn *function = functions[_i];
+    const struct dima_invocation *invocation = invocations + _i;
     make_failing();
-    void *ret = function();
+    void *ret = dima_invoke(test_dima, invocation);
     ck_assert_ptr_eq(NULL, ret);
     ck_assert_int_eq(1, my_hook_count);
 }
@@ -117,8 +87,9 @@ END_TEST
 
 void add_tests(Suite *suite) {
     add_forwarding_tests(suite);
-    int n_functions = sizeof(functions) / sizeof(*functions);
     ADD_TEST(exits_on_failure_if_next_does);
     ADD_TEST(does_not_exit_on_failure_if_next_does_not);
-    ADD_LOOP_TEST(calls_hook_on_failure, 0, n_functions);
+
+    init_invocations();
+    ADD_LOOP_TEST(calls_hook_on_failure, 0, N_INVOCATIONS);
 }

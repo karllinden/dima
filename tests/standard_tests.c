@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-#include "standard_tests.h"
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <dima/proxy/invocation.h>
+
 #include "powz.h"
+#include "standard_tests.h"
 #include "test.h"
 
 /* Flag for the dima_*alloc_array* functions. */
@@ -37,16 +38,13 @@
 
 struct test_data;
 
-/* Generic interface to the dima_*alloc*, functions. */
-typedef void *function_under_test_fn(const struct test_data *data);
-
 /* The type of the test functions. */
 typedef void test_fn(struct test_data *data);
 
 /* A structure adapts a function so that tests can be generated. */
 struct function {
     const char *name;
-    function_under_test_fn *fn;
+    enum dima_function fn;
     unsigned flags;
 };
 
@@ -83,11 +81,8 @@ struct instance {
  */
 struct test_data {
     struct instance instance;
+    struct dima_invocation invocation;
     int param;
-
-    void *ptr;
-    size_t nmemb;
-    size_t size;
 };
 
 static void *call_function_under_test(const struct test_data *data);
@@ -219,53 +214,29 @@ START_TEST(test_strndup_returns_writable_memory) {
 }
 END_TEST
 
-static void *test_alloc(const struct test_data *data) {
-    return dima_alloc(test_dima, data->size);
-}
-
-static void *test_alloc0(const struct test_data *data) {
-    return dima_alloc0(test_dima, data->size);
-}
-
-static void *test_realloc(const struct test_data *data) {
-    return dima_realloc(test_dima, data->ptr, data->size);
-}
-
-static void *test_alloc_array(const struct test_data *data) {
-    return dima_alloc_array(test_dima, data->nmemb, data->size);
-}
-
-static void *test_alloc_array0(const struct test_data *data) {
-    return dima_alloc_array0(test_dima, data->nmemb, data->size);
-}
-
-static void *test_realloc_array(const struct test_data *data) {
-    return dima_realloc_array(test_dima, data->ptr, data->nmemb, data->size);
-}
-
 static void test_works_when_size_0(struct test_data *data) {
-    data->size = 0;
+    data->invocation.size = 0;
     void *ptr = call_function_under_test(data);
     /* ptr may be NULL or non-NULL, but at least it should not crash. */
     dima_free(test_dima, ptr);
 }
 
 static void test_returns_non_null_when_size_is_1(struct test_data *data) {
-    data->size = 1;
+    data->invocation.size = 1;
     void *ptr = call_function_under_test(data);
     ck_assert_ptr_ne(NULL, ptr);
     dima_free(test_dima, ptr);
 }
 
 static void test_returns_non_null_when_size_is_small(struct test_data *data) {
-    data->size = 64;
+    data->invocation.size = 64;
     void *ptr = call_function_under_test(data);
     ck_assert_ptr_ne(NULL, ptr);
     dima_free(test_dima, ptr);
 }
 
 static void test_returns_writable_memory(struct test_data *data) {
-    data->size = 98;
+    data->invocation.size = 98;
     void *ptr = call_function_under_test(data);
     memset(ptr, 'c', 98);
     dima_free(test_dima, ptr);
@@ -276,7 +247,7 @@ static void test_returns_null_on_failure(struct test_data *data) {
      * here, but allocating 5/4 * SIZE_MAX should fail even if it is done in
      * five allocations. */
     void *ptrs[5];
-    data->size = SIZE_MAX / 4;
+    data->invocation.size = SIZE_MAX / 4;
     for (int i = 0; i < 5; ++i) {
         ptrs[i] = call_function_under_test(data);
     }
@@ -291,16 +262,16 @@ static void test_returns_null_on_failure(struct test_data *data) {
 }
 
 static void test_returns_writable_array(struct test_data *data) {
-    data->nmemb = 112;
-    data->size = 10;
+    data->invocation.nmemb = 112;
+    data->invocation.size = 10;
     void *ptr = call_function_under_test(data);
-    memset(ptr, '@', data->nmemb * data->size);
+    memset(ptr, '@', data->invocation.nmemb * data->invocation.size);
     dima_free(test_dima, ptr);
 }
 
 static void test_works_when_nmemb_is_0(struct test_data *data) {
-    data->nmemb = 0;
-    data->size = SIZE_MAX / 4;
+    data->invocation.nmemb = 0;
+    data->invocation.size = SIZE_MAX / 4;
     void *ptr = call_function_under_test(data);
     /* ptr may be NULL or non-NULL, but at least it should not crash. */
     dima_free(test_dima, ptr);
@@ -319,16 +290,16 @@ static void test_returns_null_on_overflow(struct test_data *data) {
 
     size_t small = weight * pow3z(n);
     size_t large = pow3z_inv(n);
-    data->nmemb = small_nmemb ? small : large;
-    data->size = small_nmemb ? large : small;
+    data->invocation.nmemb = small_nmemb ? small : large;
+    data->invocation.size = small_nmemb ? large : small;
 
     void *ptr = call_function_under_test(data);
     ck_assert_msg(ptr == NULL,
                   "Expected array allocation to fail with:\n"
                   "    nmemb = %zu * %zu = %zu\n"
                   "    size = %zu\n",
-                  data->nmemb,
-                  data->size);
+                  data->invocation.nmemb,
+                  data->invocation.size);
 }
 
 static size_t min_size(size_t a, size_t b) {
@@ -341,8 +312,8 @@ static void test_realloc_works(struct test_data *data, size_t new_size) {
     char *ptr = dima_alloc(test_dima, INITIAL_REALLOC_SIZE);
     memcpy(ptr, s, INITIAL_REALLOC_SIZE);
 
-    data->ptr = ptr;
-    data->size = new_size;
+    data->invocation.ptr = ptr;
+    data->invocation.size = new_size;
     char *new_ptr = call_function_under_test(data);
 
     ck_assert_ptr_ne(NULL, new_ptr);
@@ -369,8 +340,8 @@ static void test_allocates_additional_writable_memory(struct test_data *data) {
     char *ptr = dima_alloc(test_dima, INITIAL_REALLOC_SIZE);
     memcpy(ptr, s, INITIAL_REALLOC_SIZE);
 
-    data->ptr = ptr;
-    data->size = INITIAL_REALLOC_SIZE * 2 - 1;
+    data->invocation.ptr = ptr;
+    data->invocation.size = INITIAL_REALLOC_SIZE * 2 - 1;
     char *new_ptr = call_function_under_test(data);
 
     ck_assert_ptr_ne(NULL, new_ptr);
@@ -380,7 +351,7 @@ static void test_allocates_additional_writable_memory(struct test_data *data) {
 }
 
 static void test_returns_zero_initialized_memory(struct test_data *data) {
-    data->size = 27;
+    data->invocation.size = 27;
     unsigned char *buf = call_function_under_test(data);
     for (int i = 0; i < 27; ++i) {
         ck_assert_uint_eq(0, buf[i]);
@@ -389,12 +360,12 @@ static void test_returns_zero_initialized_memory(struct test_data *data) {
 }
 
 static const struct function functions[] = {
-        {"alloc", test_alloc, 0},
-        {"alloc0", test_alloc0, ZERO},
-        {"realloc", test_realloc, REALLOC},
-        {"alloc_array", test_alloc_array, ARRAY},
-        {"alloc_array0", test_alloc_array0, ARRAY | ZERO},
-        {"realloc_array", test_realloc_array, REALLOC | ARRAY},
+        {"alloc", DIMA_ALLOC, 0},
+        {"alloc0", DIMA_ALLOC0, ZERO},
+        {"realloc", DIMA_REALLOC, REALLOC},
+        {"alloc_array", DIMA_ALLOC_ARRAY, ARRAY},
+        {"alloc_array0", DIMA_ALLOC_ARRAY0, ARRAY | ZERO},
+        {"realloc_array", DIMA_REALLOC_ARRAY, REALLOC | ARRAY},
 };
 #define N_FUNCTIONS (sizeof(functions) / sizeof(functions[0]))
 
@@ -525,14 +496,19 @@ static const char *instance_name(const struct instance *inst) {
 
 static void init_test_data(struct test_data *d, int i) {
     init_instance_from_param(&d->instance, &i);
+
+    /* We need values for ptr and nmemb that make the realloc and array
+     * functions behave as the corresponding functions without realloc and
+     * array. Thus, we initialize the invocation as realloc_array and only
+     * modify the function code so that the function under test is called. */
+    dima_init_realloc_array_invocation(&d->invocation, NULL, 1, 0);
+    d->invocation.function = d->instance.function->fn;
+
     d->param = i;
-    d->ptr = NULL;
-    d->nmemb = 1;
-    d->size = 0;
 }
 
 static void *call_function_under_test(const struct test_data *data) {
-    return data->instance.function->fn(data);
+    return dima_invoke(test_dima, &data->invocation);
 }
 
 static void call_test_function(struct test_data *data) {
