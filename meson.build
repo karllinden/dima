@@ -20,7 +20,6 @@ add_global_arguments(cc.get_supported_arguments(cc_flags), language: 'c')
 name = 'dima'
 slot = meson.project_version().split('.')[0]
 slotname = name + '-' + slot
-libslotname = meson.project_name() + '-' + slot
 
 pkg = import('pkgconfig')
 
@@ -88,7 +87,7 @@ dima = declare_dependency(
 
 pkg.generate(
   lib,
-  name: libslotname,
+  name: slotname,
   subdirs: slotname,
   description: meson.project_name())
 
