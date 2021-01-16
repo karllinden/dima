@@ -56,37 +56,29 @@ if have_any_function
   add_global_arguments('-D_GNU_SOURCE', language: 'c')
 endif
 
-header_names = [
-  'derived',
-  'dima',
-  'exiting_on_failure',
-  'failing',
-  'failure_hook',
-  'system',
-]
-headers = []
-foreach header_name : header_names
-  headers += join_paths('include', name, header_name + '.h')
-endforeach
-install_headers(headers, subdir: join_paths(slotname, name))
+install_headers(
+  [
+    'include/dima/derived.h',
+    'include/dima/dima.h',
+    'include/dima/exiting_on_failure.h',
+    'include/dima/failing.h',
+    'include/dima/failure_hook.h',
+    'include/dima/system.h',
+  ],
+  subdir: join_paths(slotname, name))
 
 incdirs = include_directories('include')
 
-sources = []
-source_names = [
-  'derived',
-  'dima',
-  'exiting_on_failure',
-  'failing',
-  'failure_hook',
-  'system',
-]
-foreach source_name : source_names
-  sources += join_paths('src', source_name + '.c')
-endforeach
 lib = library(
   slotname,
-  sources,
+  [
+    'src/derived.c',
+    'src/dima.c',
+    'src/exiting_on_failure.c',
+    'src/failing.c',
+    'src/failure_hook.c',
+    'src/system.c',
+  ],
   include_directories: incdirs,
   install: true)
 
