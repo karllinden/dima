@@ -87,9 +87,11 @@ dima = declare_dependency(
   link_with: lib,
   include_directories: incdirs)
 
+url = 'https://github.com/karllinden/dima'
 pkg.generate(
   lib,
   name: slotname,
+  url: url,
   subdirs: slotname,
   description: 'Dependency injectable memory allocator')
 
@@ -111,6 +113,7 @@ dima_proxy = declare_dependency(
 pkg.generate(
   proxy_lib,
   name: proxy_slotname,
+  url: url,
   subdirs: slotname,
   requires: slotname,
   description: 'Proxy DIMA implementations')
