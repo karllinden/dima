@@ -112,6 +112,7 @@ pkg.generate(
   proxy_lib,
   name: proxy_slotname,
   subdirs: slotname,
+  requires: slotname,
   description: 'Proxy DIMA implementations')
 
 check = dependency('check', required: get_option('test'))
