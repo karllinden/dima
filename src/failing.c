@@ -16,7 +16,7 @@
 
 #include <dima/failing.h>
 
-static void failing_free() {
+static void failing_free(struct dima *dima UNUSED, void *ptr UNUSED) {
     /* Cannot fail. */
 }
 
@@ -49,7 +49,7 @@ static char *failing_strdup(struct dima *dima UNUSED, const char *s UNUSED) {
 
 static char *failing_strndup(struct dima *dima UNUSED,
                              const char *s UNUSED,
-                             size_t size UNUSED) {
+                             size_t n UNUSED) {
     return NULL;
 }
 
