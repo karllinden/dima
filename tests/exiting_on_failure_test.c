@@ -28,7 +28,7 @@ END_TEST
 
 void init_test_dima(void) {
     init_forwardee();
-    dima_init_exiting_on_failure(&instance, &forwardee.dima, 77);
+    dima_init_exiting_on_failure(&instance, dima_from_fake(&forwardee), 77);
     test_dima = dima_from_exiting_on_failure(&instance);
 }
 

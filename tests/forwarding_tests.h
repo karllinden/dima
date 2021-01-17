@@ -32,6 +32,10 @@ struct fake {
 
 struct fake forwardee;
 
+static inline struct dima *dima_from_fake(struct fake *fake) {
+    return &fake->dima;
+}
+
 void init_forwardee(void);
 void add_forwarding_tests(Suite *suite);
 

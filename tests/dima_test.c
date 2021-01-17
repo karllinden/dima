@@ -21,7 +21,7 @@
 
 void init_test_dima(void) {
     init_forwardee();
-    test_dima = &forwardee.dima;
+    test_dima = dima_from_fake(&forwardee);
 }
 
 void add_tests(Suite *suite) {

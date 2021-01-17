@@ -44,7 +44,8 @@ static void make_failing(void) {
 void init_test_dima(void) {
     my_hook_count = 0;
     init_forwardee();
-    dima_init_with_failure_hook(&instance, &forwardee.dima, my_hook, &my_data);
+    dima_init_with_failure_hook(
+            &instance, dima_from_fake(&forwardee), my_hook, &my_data);
     test_dima = dima_from_with_failure_hook(&instance);
 }
 
