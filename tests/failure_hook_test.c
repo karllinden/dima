@@ -21,6 +21,7 @@
 #include <dima/system.h>
 
 #include "forwarding_tests.h"
+#include "invocations.h"
 #include "test.h"
 
 static struct dima failing;
@@ -49,20 +50,6 @@ void init_test_dima(void) {
     test_dima = dima_from_with_failure_hook(&instance);
 }
 
-#define N_INVOCATIONS 8
-static struct dima_invocation invocations[N_INVOCATIONS];
-
-static void init_invocations(void) {
-    dima_init_alloc_invocation(invocations + 0, 8);
-    dima_init_alloc0_invocation(invocations + 1, 40);
-    dima_init_realloc_invocation(invocations + 2, NULL, 20);
-    dima_init_alloc_array_invocation(invocations + 3, 23, 25);
-    dima_init_alloc_array0_invocation(invocations + 4, 12, 21);
-    dima_init_realloc_array_invocation(invocations + 5, NULL, 89, 50);
-    dima_init_strdup_invocation(invocations + 6, "Hello!");
-    dima_init_strndup_invocation(invocations + 7, "Goodbye!", 6);
-}
-
 START_TEST(test_exits_on_failure_if_next_does) {
     struct dima_exiting_on_failure deof;
     dima_init_exiting_on_failure(&deof, &failing, 77);
@@ -79,6 +66,11 @@ END_TEST
 
 START_TEST(test_calls_hook_on_failure) {
     const struct dima_invocation *invocation = invocations + _i;
+    if (invocation->function == DIMA_FREE) {
+        /* dima_free() never fails. */
+        return;
+    }
+
     make_failing();
     void *ret = dima_invoke(test_dima, invocation);
     ck_assert_ptr_eq(NULL, ret);
