@@ -21,6 +21,11 @@
 
 static struct dima_exiting_on_failure instance;
 
+START_TEST(test_is_not_proxy) {
+    ck_assert_int_eq(0, dima_is_proxy(test_dima));
+}
+END_TEST
+
 START_TEST(test_exits_on_failure) {
     ck_assert_int_ne(0, dima_exits_on_failure(test_dima));
 }
@@ -33,6 +38,7 @@ void init_test_dima(void) {
 }
 
 void add_tests(Suite *suite) {
+    ADD_TEST(is_not_proxy);
     ADD_TEST(exits_on_failure);
     add_forwarding_tests(suite);
 }

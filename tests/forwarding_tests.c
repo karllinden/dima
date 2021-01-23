@@ -21,85 +21,16 @@
 
 static char fake_return[3];
 
-static void fake_free(struct dima *dima, void *ptr) {
-    struct fake *fake = (struct fake *)dima;
+static void *invoke_fake(struct dima_proxy *proxy,
+                         const struct dima_invocation *invocation) {
+    struct fake *fake = (struct fake *)proxy;
     fake->count++;
-    dima_init_free_invocation(&fake->invocation, ptr);
-}
-
-static void *fake_alloc(struct dima *dima, size_t size) {
-    struct fake *fake = (struct fake *)dima;
-    fake->count++;
-    dima_init_alloc_invocation(&fake->invocation, size);
+    dima_copy_invocation(&fake->invocation, invocation);
     return fake_return;
 }
-
-static void *fake_alloc0(struct dima *dima, size_t size) {
-    struct fake *fake = (struct fake *)dima;
-    fake->count++;
-    dima_init_alloc0_invocation(&fake->invocation, size);
-    return fake_return;
-}
-
-static void *fake_realloc(struct dima *dima, void *ptr, size_t size) {
-    struct fake *fake = (struct fake *)dima;
-    fake->count++;
-    dima_init_realloc_invocation(&fake->invocation, ptr, size);
-    return fake_return;
-}
-
-static void *fake_alloc_array(struct dima *dima, size_t nmemb, size_t size) {
-    struct fake *fake = (struct fake *)dima;
-    fake->count++;
-    dima_init_alloc_array_invocation(&fake->invocation, nmemb, size);
-    return fake_return;
-}
-
-static void *fake_alloc_array0(struct dima *dima, size_t nmemb, size_t size) {
-    struct fake *fake = (struct fake *)dima;
-    fake->count++;
-    dima_init_alloc_array0_invocation(&fake->invocation, nmemb, size);
-    return fake_return;
-}
-
-static void *fake_realloc_array(struct dima *dima,
-                                void *ptr,
-                                size_t nmemb,
-                                size_t size) {
-    struct fake *fake = (struct fake *)dima;
-    fake->count++;
-    dima_init_realloc_array_invocation(&fake->invocation, ptr, nmemb, size);
-    return fake_return;
-}
-
-static char *fake_strdup(struct dima *dima, const char *s) {
-    struct fake *fake = (struct fake *)dima;
-    fake->count++;
-    dima_init_strdup_invocation(&fake->invocation, s);
-    return fake_return;
-}
-
-static char *fake_strndup(struct dima *dima, const char *s, size_t n) {
-    struct fake *fake = (struct fake *)dima;
-    fake->count++;
-    dima_init_strndup_invocation(&fake->invocation, s, n);
-    return fake_return;
-}
-
-static const struct dima_vtable fake_vtable = {
-        fake_free,
-        fake_alloc,
-        fake_alloc0,
-        fake_realloc,
-        fake_alloc_array,
-        fake_alloc_array0,
-        fake_realloc_array,
-        fake_strdup,
-        fake_strndup,
-};
 
 static void fake_init(struct fake *fake) {
-    fake->dima.vtable = &fake_vtable;
+    dima_init_proxy(&fake->proxy, invoke_fake, 0);
     fake->count = 0;
 }
 

@@ -102,7 +102,7 @@ void dima_init_with_failure_hook(struct dima_with_failure_hook *dima,
                                  dima_failure_fn *hook,
                                  void *ptr) {
     dima->dima.vtable = &failure_hook_vtable;
-    dima->dima.flags = next->flags;
+    dima->dima.flags = next->flags & DIMA_EXITS_ON_FAILURE;
     dima->next = next;
     dima->hook = hook;
     dima->ptr = ptr;

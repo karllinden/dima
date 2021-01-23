@@ -64,6 +64,7 @@ install_headers(
     'include/dima/failure_hook.h',
     'include/dima/system.h',
 
+    'include/dima/proxy/proxy.h',
     'include/dima/proxy/invocation.h',
   ],
   subdir: join_paths(slotname, name))
@@ -99,7 +100,8 @@ proxy_slotname = name + '-proxy-' + slot
 proxy_lib = library(
   proxy_slotname,
   [
-    'src/proxy/invocation.c'
+    'src/proxy/invocation.c',
+    'src/proxy/proxy.c',
   ],
   include_directories: incdirs,
   install: true,
@@ -137,6 +139,7 @@ if check.found()
     'exiting_on_failure',
     'failure_hook',
     'powz',
+    'proxy',
     'system',
   ]
   foreach name : test_names

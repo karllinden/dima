@@ -118,10 +118,18 @@
 #include <stddef.h>
 
 /**
- * Flag that should be set in dima->flags if and only if the implementation
- * exits on failure.
+ * Flag that is set in dima->flags if and only if the implementation exits on
+ * failure.
  */
 #define DIMA_EXITS_ON_FAILURE (1u << 0)
+
+/**
+ * Flag that is set in dima->flags if and only if the implementation is a struct
+ * dima_proxy.
+ *
+ * Library users do not need to set this flag.
+ */
+#define DIMA_IS_PROXY (1u << 1);
 
 struct dima;
 
@@ -182,6 +190,13 @@ char *dima_strndup(struct dima *dima, const char *s, size_t n);
  */
 static inline int dima_exits_on_failure(const struct dima *dima) {
     return dima->flags & DIMA_EXITS_ON_FAILURE;
+}
+
+/**
+ * Returns non-zero if and only if the implementaion is a struct dima_proxy.
+ */
+static inline int dima_is_proxy(const struct dima *dima) {
+    return dima->flags & DIMA_IS_PROXY;
 }
 
 #endif /* !DIMA_DIMA_H */

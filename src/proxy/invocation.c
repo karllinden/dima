@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <dima/proxy/invocation.h>
+#include <dima/proxy/proxy.h>
 
 static void COLD NORETURN fatal_impl(const char *file,
                                      int line,
@@ -37,6 +37,33 @@ static void COLD NORETURN fatal_impl(const char *file,
     abort();
 }
 #define fatal(...) fatal_impl(__FILE__, __LINE__, __VA_ARGS__)
+
+static void *dima_invoke_non_proxy(struct dima *dima,
+                                   const struct dima_invocation *inv) {
+    switch (inv->function) {
+        case DIMA_FREE:
+            dima_free(dima, inv->ptr);
+            return NULL;
+        case DIMA_ALLOC:
+            return dima_alloc(dima, inv->size);
+        case DIMA_ALLOC0:
+            return dima_alloc0(dima, inv->size);
+        case DIMA_REALLOC:
+            return dima_realloc(dima, inv->ptr, inv->size);
+        case DIMA_ALLOC_ARRAY:
+            return dima_alloc_array(dima, inv->nmemb, inv->size);
+        case DIMA_ALLOC_ARRAY0:
+            return dima_alloc_array0(dima, inv->nmemb, inv->size);
+        case DIMA_REALLOC_ARRAY:
+            return dima_realloc_array(dima, inv->ptr, inv->nmemb, inv->size);
+        case DIMA_STRDUP:
+            return dima_strdup(dima, inv->s);
+        case DIMA_STRNDUP:
+            return dima_strndup(dima, inv->s, inv->n);
+    }
+
+    fatal("Invalid function %d in invocation.", inv->function);
+}
 
 static inline void init_invocation(struct dima_invocation *invocation) {
     /* Because memcmpy is used for dima_compare_invocations any padding bits
@@ -119,32 +146,19 @@ void dima_init_strndup_invocation(struct dima_invocation *invocation,
 }
 
 void *dima_invoke(struct dima *dima, const struct dima_invocation *inv) {
-    switch (inv->function) {
-        case DIMA_FREE:
-            dima_free(dima, inv->ptr);
-            return NULL;
-        case DIMA_ALLOC:
-            return dima_alloc(dima, inv->size);
-        case DIMA_ALLOC0:
-            return dima_alloc0(dima, inv->size);
-        case DIMA_REALLOC:
-            return dima_realloc(dima, inv->ptr, inv->size);
-        case DIMA_ALLOC_ARRAY:
-            return dima_alloc_array(dima, inv->nmemb, inv->size);
-        case DIMA_ALLOC_ARRAY0:
-            return dima_alloc_array0(dima, inv->nmemb, inv->size);
-        case DIMA_REALLOC_ARRAY:
-            return dima_realloc_array(dima, inv->ptr, inv->nmemb, inv->size);
-        case DIMA_STRDUP:
-            return dima_strdup(dima, inv->s);
-        case DIMA_STRNDUP:
-            return dima_strndup(dima, inv->s, inv->n);
+    if (dima_is_proxy(dima)) {
+        return dima_invoke_proxy((struct dima_proxy *)dima, inv);
+    } else {
+        return dima_invoke_non_proxy(dima, inv);
     }
-
-    fatal("Invalid function %d in invocation.", inv->function);
 }
 
 int dima_compare_invocations(const struct dima_invocation *a,
                              const struct dima_invocation *b) {
     return memcmp(a, b, sizeof(*a));
+}
+
+void dima_copy_invocation(struct dima_invocation *dest,
+                          const struct dima_invocation *src) {
+    memcpy(dest, src, sizeof(*dest));
 }

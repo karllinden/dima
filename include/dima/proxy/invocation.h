@@ -110,4 +110,10 @@ void *dima_invoke(struct dima *dima, const struct dima_invocation *inv);
 int dima_compare_invocations(const struct dima_invocation *a,
                              const struct dima_invocation *b);
 
+/**
+ * Copies the invocation at src to the invocation at dest.
+ */
+void dima_copy_invocation(struct dima_invocation *dest,
+                          const struct dima_invocation *src);
+
 #endif /* !DIMA_PROXY_INVOCATION_H */

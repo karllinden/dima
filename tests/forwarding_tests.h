@@ -21,11 +21,10 @@
 
 #include <check.h>
 
-#include <dima/dima.h>
-#include <dima/proxy/invocation.h>
+#include <dima/proxy/proxy.h>
 
 struct fake {
-    struct dima dima;
+    struct dima_proxy proxy;
     int count;
     struct dima_invocation invocation;
 };
@@ -33,7 +32,7 @@ struct fake {
 struct fake forwardee;
 
 static inline struct dima *dima_from_fake(struct fake *fake) {
-    return &fake->dima;
+    return dima_from_proxy(&fake->proxy);
 }
 
 void init_forwardee(void);
