@@ -91,7 +91,7 @@
  *  + dima/thread_local.h (TODO)
  *  + dima/notifying.h (TODO)
  *  + dima/proxy/failing.h
- *  + dima/proxy/eventually_failing.h (TODO)
+ *  + dima/proxy/eventually_failing.h
  *  + dima/proxy/randomly_failing.h (TODO)
  *
  * Clients outside the DIMA library may implement this abstraction, by creating
