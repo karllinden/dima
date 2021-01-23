@@ -15,8 +15,8 @@
  */
 
 #include <dima/exiting_on_failure.h>
-#include <dima/failing.h>
 #include <dima/failure_hook.h>
+#include <dima/proxy/failing.h>
 #include <dima/proxy/invocation.h>
 #include <dima/system.h>
 
@@ -24,7 +24,7 @@
 #include "invocations.h"
 #include "test.h"
 
-static struct dima failing;
+static struct dima_proxy failing;
 static struct dima_with_failure_hook instance;
 
 /* We only care about the address. */
@@ -39,7 +39,8 @@ static void my_hook(void *ptr) {
 
 static void make_failing(void) {
     dima_init_failing(&failing);
-    dima_init_with_failure_hook(&instance, &failing, my_hook, &my_data);
+    dima_init_with_failure_hook(
+            &instance, dima_from_proxy(&failing), my_hook, &my_data);
 }
 
 void init_test_dima(void) {
@@ -52,7 +53,7 @@ void init_test_dima(void) {
 
 START_TEST(test_exits_on_failure_if_next_does) {
     struct dima_exiting_on_failure deof;
-    dima_init_exiting_on_failure(&deof, &failing, 77);
+    dima_init_exiting_on_failure(&deof, dima_from_proxy(&failing), 77);
     dima_init_with_failure_hook(
             &instance, dima_from_exiting_on_failure(&deof), my_hook, &my_data);
     ck_assert_int_ne(0, dima_exits_on_failure(test_dima));

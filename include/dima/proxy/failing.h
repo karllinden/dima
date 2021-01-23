@@ -15,22 +15,22 @@
  */
 
 /*
- * dima/failing.h
+ * dima/proxy/failing.h
  * --------------
- * A DIMA implementation that fails unconditionally, which is useful for
+ * A DIMA proxy implementation that fails unconditionally, which is useful for
  * testing.
  *
  * This implementation is thread-safe.
  */
 
-#ifndef DIMA_FAILING_H
-#define DIMA_FAILING_H
+#ifndef DIMA_PROXY_FAILING_H
+#define DIMA_PROXY_FAILING_H
 
-#include <dima/dima.h>
+#include <dima/proxy/proxy.h>
 
 /**
- * Initializes the given struct dima so that it fails unconditionally.
+ * Initializes the given struct dima_proxy so that it fails unconditionally.
  */
-void dima_init_failing(struct dima *dima);
+void dima_init_failing(struct dima_proxy *proxy);
 
-#endif /* !DIMA_FAILING_H */
+#endif /* !DIMA_PROXY_FAILING_H */

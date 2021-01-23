@@ -60,10 +60,10 @@ install_headers(
     'include/dima/derived.h',
     'include/dima/dima.h',
     'include/dima/exiting_on_failure.h',
-    'include/dima/failing.h',
     'include/dima/failure_hook.h',
     'include/dima/system.h',
 
+    'include/dima/proxy/failing.h',
     'include/dima/proxy/proxy.h',
     'include/dima/proxy/invocation.h',
   ],
@@ -77,7 +77,6 @@ lib = library(
     'src/derived.c',
     'src/dima.c',
     'src/exiting_on_failure.c',
-    'src/failing.c',
     'src/failure_hook.c',
     'src/system.c',
   ],
@@ -100,6 +99,7 @@ proxy_slotname = name + '-proxy-' + slot
 proxy_lib = library(
   proxy_slotname,
   [
+    'src/proxy/failing.c',
     'src/proxy/invocation.c',
     'src/proxy/proxy.c',
   ],

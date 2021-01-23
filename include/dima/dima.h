@@ -90,9 +90,9 @@
  *  + dima/spin_locked.h (TODO)
  *  + dima/thread_local.h (TODO)
  *  + dima/notifying.h (TODO)
- *  + dima/failing.h
- *  + dima/eventually_failing.h (TODO)
- *  + dima/randomly_failing.h (TODO)
+ *  + dima/proxy/failing.h
+ *  + dima/proxy/eventually_failing.h (TODO)
+ *  + dima/proxy/randomly_failing.h (TODO)
  *
  * Clients outside the DIMA library may implement this abstraction, by creating
  * a struct that has a struct dima as first member and filling the composed dima
