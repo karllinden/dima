@@ -92,7 +92,7 @@
  *  + dima/notifying.h (TODO)
  *  + dima/proxy/failing.h
  *  + dima/proxy/eventually_failing.h
- *  + dima/proxy/randomly_failing.h (TODO)
+ *  + dima/proxy/randomly_failing.h
  *
  * Clients outside the DIMA library may implement this abstraction, by creating
  * a struct that has a struct dima as first member and filling the composed dima
