@@ -71,6 +71,7 @@ install_headers(
     'include/dima/proxy/failing.h',
     'include/dima/proxy/invocation.h',
     'include/dima/proxy/proxy.h',
+    'include/dima/proxy/pthread_mutex_locked.h',
     'include/dima/proxy/randomly_failing.h',
   ],
   subdir: join_paths(slotname, name, 'proxy'))
@@ -101,19 +102,29 @@ pkg.generate(
   subdirs: slotname,
   description: 'Dependency injectable memory allocator')
 
+threads = dependency('threads')
+has_pthread_mutex = cc.has_type(
+    'pthread_mutex_t',
+    prefix: '#include <pthread.h>',
+    dependencies: threads)
+
 proxy_slotname = name + '-proxy-' + slot
+proxy_src = [
+  'src/proxy/eventually_failing.c',
+  'src/proxy/failing.c',
+  'src/proxy/invocation.c',
+  'src/proxy/proxy.c',
+  'src/proxy/randomly_failing.c',
+]
+if has_pthread_mutex
+  proxy_src += ['src/proxy/pthread_mutex_locked.c']
+endif
 proxy_lib = library(
   proxy_slotname,
-  [
-    'src/proxy/eventually_failing.c',
-    'src/proxy/failing.c',
-    'src/proxy/invocation.c',
-    'src/proxy/proxy.c',
-    'src/proxy/randomly_failing.c',
-  ],
+  proxy_src,
   include_directories: incdirs,
   install: true,
-  dependencies: dima)
+  dependencies: [dima, threads])
 
 dima_proxy = declare_dependency(
   link_with: proxy_lib,
@@ -152,6 +163,9 @@ if check.found()
     'randomly_failing',
     'system',
   ]
+  if has_pthread_mutex
+    test_names += ['pthread_mutex_locked']
+  endif
   foreach name : test_names
     test_source = join_paths('tests', name + '_test.c')
     exe = executable(

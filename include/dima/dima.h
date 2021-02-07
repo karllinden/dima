@@ -90,7 +90,7 @@
  *  + dima/derived.h
  *  + dima/exiting_on_failure.h
  *  + dima/failure_hook.h
- *  + dima/proxy/pthread_mutex_locked.h (TODO)
+ *  + dima/proxy/pthread_mutex_locked.h
  *  + dima/proxy/failing.h
  *  + dima/proxy/eventually_failing.h
  *  + dima/proxy/randomly_failing.h
