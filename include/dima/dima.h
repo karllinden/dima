@@ -129,7 +129,7 @@
  *
  * Library users do not need to set this flag.
  */
-#define DIMA_IS_PROXY (1u << 1);
+#define DIMA_IS_PROXY (1u << 1)
 
 struct dima;
 
