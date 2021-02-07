@@ -33,7 +33,10 @@ static void *invoke_eventually_failing(struct dima_proxy *proxy,
 void dima_init_eventually_failing(struct dima_eventually_failing *dima,
                                   struct dima *next,
                                   size_t n_allocs) {
-    dima_init_proxy(&dima->proxy, invoke_eventually_failing, 0);
+    unsigned flags = dima_forward_flags(next);
+    flags &= ~DIMA_EXITS_ON_FAILURE;
+    flags &= ~DIMA_IS_THREAD_SAFE;
+    dima_init_proxy(&dima->proxy, invoke_eventually_failing, flags);
     dima->next = next;
     dima->n_allocs = n_allocs;
 }

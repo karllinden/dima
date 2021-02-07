@@ -21,11 +21,17 @@
 
 struct dima instance;
 
+START_TEST(test_system_is_thread_safe) {
+    ck_assert_int_ne(0, dima_is_thread_safe(&instance));
+}
+END_TEST
+
 void init_test_dima(void) {
     dima_init_system(&instance);
     test_dima = &instance;
 }
 
 void add_tests(Suite *suite) {
+    ADD_TEST(system_is_thread_safe);
     add_standard_tests(suite);
 }

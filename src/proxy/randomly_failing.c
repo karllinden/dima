@@ -45,7 +45,13 @@ void dima_init_randomly_failing(struct dima_randomly_failing *dima,
                                 struct dima *next,
                                 int failure_percentage) {
     assert(failure_percentage >= 0 && failure_percentage <= 100);
-    dima_init_proxy(&dima->proxy, invoke_randomly_failing, 0);
+
+    unsigned flags = dima_forward_flags(next);
+    flags &= ~DIMA_EXITS_ON_FAILURE;
+    flags &= ~DIMA_IS_THREAD_SAFE;
+    flags |= DIMA_IS_THREAD_HOSTILE;
+
+    dima_init_proxy(&dima->proxy, invoke_randomly_failing, flags);
     dima->next = next;
     dima->failure_percentage = failure_percentage;
 }

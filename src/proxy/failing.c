@@ -22,5 +22,5 @@ static void *invoke_failing(struct dima_proxy *proxy UNUSED,
 }
 
 void dima_init_failing(struct dima_proxy *proxy) {
-    dima_init_proxy(proxy, invoke_failing, 0);
+    dima_init_proxy(proxy, invoke_failing, DIMA_IS_THREAD_SAFE);
 }

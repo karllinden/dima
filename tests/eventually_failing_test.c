@@ -16,6 +16,7 @@
 
 #include <dima/exiting_on_failure.h>
 #include <dima/proxy/eventually_failing.h>
+#include <dima/system.h>
 
 #include "forwarding_tests.h"
 #include "test.h"
@@ -44,6 +45,19 @@ START_TEST(test_does_not_exit_on_failure_even_if_next_does) {
     dima_init_eventually_failing(
             &instance, dima_from_exiting_on_failure(&deof), 1);
     ck_assert_int_eq(0, dima_exits_on_failure(test_dima));
+}
+END_TEST
+
+START_TEST(test_is_not_thread_safe) {
+    ck_assert_int_eq(0, dima_is_thread_safe(test_dima));
+}
+END_TEST
+
+START_TEST(test_is_not_thread_safe_even_if_next_is) {
+    struct dima system;
+    dima_init_system(&system);
+    dima_init_eventually_failing(&instance, &system, 2);
+    ck_assert_int_eq(0, dima_is_thread_safe(test_dima));
 }
 END_TEST
 
@@ -92,6 +106,8 @@ END_TEST
 void add_tests(Suite *suite) {
     ADD_TEST(does_not_exit_on_failure);
     ADD_TEST(does_not_exit_on_failure_even_if_next_does);
+    ADD_TEST(is_not_thread_safe);
+    ADD_TEST(is_not_thread_safe_even_if_next_is);
     ADD_TEST(alloc_fails_after_0);
     ADD_TEST(alloc0_fails_after_1);
     ADD_TEST(free_does_not_count);

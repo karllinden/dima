@@ -19,6 +19,7 @@
 
 #include <dima/exiting_on_failure.h>
 #include <dima/proxy/randomly_failing.h>
+#include <dima/system.h>
 
 #include "forwarding_tests.h"
 #include "test.h"
@@ -36,6 +37,19 @@ START_TEST(test_does_not_exit_on_failure_even_if_next_does) {
     dima_init_randomly_failing(
             &instance, dima_from_exiting_on_failure(&deof), 1);
     ck_assert_int_eq(0, dima_exits_on_failure(test_dima));
+}
+END_TEST
+
+START_TEST(test_is_not_thread_safe) {
+    struct dima system;
+    dima_init_system(&system);
+    dima_init_randomly_failing(&instance, &system, 0);
+    ck_assert_int_eq(0, dima_is_thread_safe(test_dima));
+}
+END_TEST
+
+START_TEST(test_is_thread_hostile) {
+    ck_assert_int_ne(0, dima_is_thread_hostile(test_dima));
 }
 END_TEST
 
@@ -85,6 +99,8 @@ void add_tests(Suite *suite) {
 
     ADD_TEST(does_not_exit_on_failure);
     ADD_TEST(does_not_exit_on_failure_even_if_next_does);
+    ADD_TEST(is_not_thread_safe);
+    ADD_TEST(is_thread_hostile);
     ADD_TEST(never_fails_if_failure_percentage_is_0);
     ADD_TEST(always_fails_if_failure_percentage_is_100);
     ADD_TEST(has_ok_failure_count_if_failure_percentage_is_50);

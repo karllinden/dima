@@ -79,5 +79,5 @@ static const struct dima_vtable vtable = {
 
 void dima_init_system(struct dima *dima) {
     dima->vtable = &vtable;
-    dima->flags = 0;
+    dima->flags = DIMA_IS_THREAD_SAFE;
 }

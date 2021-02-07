@@ -131,6 +131,38 @@
  */
 #define DIMA_IS_PROXY (1u << 1)
 
+/**
+ * Flag that is set in dima->flags if and only if the implementation is safe for
+ * multi-threaded use.
+ *
+ * Note that an implementation cannot be thread safe and thread hostile at the
+ * same time.
+ */
+#define DIMA_IS_THREAD_SAFE (1u << 2)
+
+/**
+ * Flag that is set if and only if the implementation is thread hostile.
+ *
+ * A thread hostile implementation is thread unsafe and cannot be made thread
+ * safe by wrapping it in a synchronized proxy (such as
+ * dima_pthread_mutex_locked).
+ *
+ * Note that an implementation cannot be thread safe and thread hostile at the
+ * same time.
+ */
+#define DIMA_IS_THREAD_HOSTILE (1u << 3)
+
+/**
+ * Bitmask for the flags that are by default passed on when a DIMA wraps
+ * another.
+ *
+ * The forwarded flags are all flags except DIMA_IS_PROXY. For example, thread
+ * safety is forwarded by default. Thus, a wrapper implementation that is not
+ * thread safe (regardless of the wrapped implementation) should unset the
+ * DIMA_IS_THREAD_SAFE flag.
+ */
+#define DIMA_FORWARD_FLAGS (~DIMA_IS_PROXY)
+
 struct dima;
 
 typedef void dima_free_fn(struct dima *dima, void *ptr);
@@ -197,6 +229,39 @@ static inline int dima_exits_on_failure(const struct dima *dima) {
  */
 static inline int dima_is_proxy(const struct dima *dima) {
     return dima->flags & DIMA_IS_PROXY;
+}
+
+/**
+ * Returns non-zero if and only if the implementation is safe for multi-threaded
+ * use.
+ *
+ * DIMA implementations must declare whether or not they are thread safe by
+ * setting DIMA_IS_THREAD_SAFE in dima->flags appropriately.
+ *
+ * Prefer this function over checking dima->flags directly.
+ */
+static inline int dima_is_thread_safe(const struct dima *dima) {
+    return dima->flags & DIMA_IS_THREAD_SAFE;
+}
+
+/**
+ * Returns non-zero if and only if the implementation is thread-hostile.
+ *
+ * DIMA implementations must declare whether or not they are thread hostile by
+ * setting DIMA_IS_THREAD_HOSTILE in dima->flags appropriately.
+ *
+ * Prefer this function over checking dima->flags directly.
+ */
+static inline int dima_is_thread_hostile(const struct dima *dima) {
+    return dima->flags & DIMA_IS_THREAD_HOSTILE;
+}
+
+/**
+ * Returns the flags that are forwarded by default when wrapping the given DIMA
+ * implementation.
+ */
+static inline unsigned dima_forward_flags(const struct dima *dima) {
+    return dima->flags & DIMA_FORWARD_FLAGS;
 }
 
 #endif /* !DIMA_DIMA_H */
