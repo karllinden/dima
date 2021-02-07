@@ -76,40 +76,40 @@
  *  + dima_realloc(d, p, 0) behaves as dima_free(d, p)
  *  + etc.
  * Implementors should document any additional guarantees. See for example
- * dima_init_exiting_on_failure and dima_init_mutex_locked. Clients may depend
- * on any additional guarantees, but they should document any additional
+ * dima_init_exiting_on_failure and dima_init_pthread_mutex_locked. Clients may
+ * depend on any additional guarantees, but they should document any additional
  * requirements.
+ *
+ * Some of the additional guarantees have corresponding flags, and
+ * implementations must fill in the flags correctly. See the defined flags
+ * below. For example an implementation must set DIMA_EXITS_ON_FAILURE if and
+ * only if it exits on failure.
  *
  * For examples of some implementations of this abstraction can see:
  *  + dima/system.h
- *  + dima/env.h (TODO)
  *  + dima/derived.h
  *  + dima/exiting_on_failure.h
  *  + dima/failure_hook.h
- *  + dima/mutex_locked.h (TODO)
- *  + dima/spin_locked.h (TODO)
- *  + dima/thread_local.h (TODO)
- *  + dima/notifying.h (TODO)
+ *  + dima/proxy/pthread_mutex_locked.h (TODO)
  *  + dima/proxy/failing.h
  *  + dima/proxy/eventually_failing.h
  *  + dima/proxy/randomly_failing.h
  *
  * Clients outside the DIMA library may implement this abstraction, by creating
  * a struct that has a struct dima as first member and filling the composed dima
- * with a custom dima_vtable containing the functions that should be called on
- * the structure. Any data necessary for the implementation must be placed after
- * the the composed dima structure. All function pointers in the vtable must be
- * set to non-NULL values, and the pointed to functions must behave as described
- * above. To avoid re-implementing some functions, implementors can use
- * dima_init_derived_vtable and then set any extra functions. See
- * dima/derived.h.
+ * with a custom dima_vtable and flags. The vtable contains the functions that
+ * should be called on the structure. Any data necessary for the implementation
+ * must be placed after the the composed dima structure. All function pointers
+ * in the vtable must be set to non-NULL values, and the pointed to functions
+ * must behave as described above. To avoid re-implementing some functions,
+ * implementors can use dima_init_derived_vtable and then set any extra
+ * functions. See dima/derived.h.
  *
  * Implementations should document whether or not they are safe for
  * multi-threaded use, because that is not required by this abstraction. As long
  * as an implementation is not thread hostile, it can be made thread safe by
- * wrapping in a dima_mutex_locked (TODO) or dima_spin_locked (TODO). See
- * dima/mutex_locked.h (TODO) and dima/spin_locked.h (TODO) respectively for
- * more information.
+ * wrapping in a dima_pthread_mutex_locked. See
+ * dima/proxy/pthread_mutex_locked.h for more information.
  */
 
 #ifndef DIMA_DIMA_H
