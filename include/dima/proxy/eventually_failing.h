@@ -47,4 +47,4 @@ static inline struct dima *dima_from_eventually_failing(
     return dima_from_proxy(&dima->proxy);
 }
 
-#endif /* DIMA_PROXY_EVENTUALLY_FAILING_H */
+#endif /* !DIMA_PROXY_EVENTUALLY_FAILING_H */
