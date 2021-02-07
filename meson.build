@@ -62,14 +62,18 @@ install_headers(
     'include/dima/exiting_on_failure.h',
     'include/dima/failure_hook.h',
     'include/dima/system.h',
+  ],
+  subdir: join_paths(slotname, name))
 
+install_headers(
+  [
     'include/dima/proxy/eventually_failing.h',
     'include/dima/proxy/failing.h',
     'include/dima/proxy/invocation.h',
     'include/dima/proxy/proxy.h',
     'include/dima/proxy/randomly_failing.h',
   ],
-  subdir: join_paths(slotname, name))
+  subdir: join_paths(slotname, name, 'proxy'))
 
 incdirs = include_directories('include')
 
