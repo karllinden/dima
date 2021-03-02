@@ -16,7 +16,7 @@
 
 /*
  * dima/proxy/failing.h
- * --------------
+ * --------------------
  * A DIMA proxy implementation that fails unconditionally, which is useful for
  * testing.
  *

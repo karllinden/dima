@@ -59,10 +59,10 @@ In the case of DIMA, this amounts to calling `dima_alloc()` instead of
 
 Dependency injection is the approach taken by many libraries, such as libcurl,
 libevent and libpng.
-These libraries allow function pointers to custom memory functions to be
-injected.
-Each library commonly has its own function pointer types for these functions,
-which means that testing code will be repeated in some way.
+These libraries allow function pointers to custom memory allocation functions to
+be injected.
+Each library commonly has its own types for these functions, which means that
+testing code will be repeated in some way.
 DIMA aims to provide a memory management abstraction that is re-usable by other
 libraries.
 
@@ -105,8 +105,7 @@ you don't want/need to know more:
 Using DIMA is very straight-forward.
 You only need to dependency inject a `struct dima` to where it is needed.
 The library comes with a few ready-to-use implementations of `struct dima`.
-For example see `dima_init_system()`, `dima_init_env()` and
-`dima_init_exiting_on_failure()`.
+For example see `dima_init_system()` and `dima_init_exiting_on_failure()`.
 For example, this silly `range` function allows any DIMA implementation to be
 used for creating the returned array:
 
@@ -154,11 +153,6 @@ int main(void) {
     struct dima system;
     dima_init_system(&system);
     example(&system, 10);
-
-    /* Use a DIMA that is configured with environment variables. */
-    struct dima env;
-    dima_init_env(&env);
-    example(&env, 41);
 
     /* Decorate the system's allocator to exit with status 14 on failure. */
     struct dima_exiting_on_failure deof;

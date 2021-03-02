@@ -1,9 +1,0 @@
-TODO
- * Flags, such as DIMA_EXIT_ON_FAILURE, DIMA_THREAD_SAFE, DIMA_GNU_EXTENSIONS,
-   and associated functions: dima_exits_on_failure(), dima_is_thread_safe() and
-   dima_has_gnu_extensions(). Add more helpers: dima_make_exiting_on_failure,
-   dima_make_thread_safe(), dima_make_gnu_extended()?
- * Complete the implementations mentioned in README.md and include/dima/dima.h.
- * Design and implement the environment detection implementation in
-   dima_init_env().
- * LD_PRELOAD adapter with dima-ld-preload.so that uses dima_init_env().

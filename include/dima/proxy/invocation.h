@@ -102,7 +102,7 @@ void dima_init_strndup_invocation(struct dima_invocation *invocation,
 void *dima_invoke(struct dima *dima, const struct dima_invocation *inv);
 
 /**
- * Compares two invocations in an unspecified total order.
+ * Compares two invocations in an unspecified (but fixed) total order.
  *
  * Returns an integer less than, equal to or greater than zero, if a is found,
  * respectively, to be less than, equal to or greater than b.

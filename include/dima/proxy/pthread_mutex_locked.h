@@ -21,7 +21,7 @@
  * a pthread_mutex_t.
  *
  * If the next implementation is not thread hostile, then this implementation is
- * thread-safe. If the next implementation is thread-hostile, behvaior is
+ * thread-safe. If the next implementation is thread-hostile, the behavior is
  * undefined.
  *
  * Including this header introduces a compile-time dependency on pthread.h. If
