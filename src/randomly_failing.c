@@ -17,7 +17,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include <dima/proxy/randomly_failing.h>
+#include <dima/randomly_failing.h>
 
 #define LIMIT (RAND_MAX - RAND_MAX % 100)
 

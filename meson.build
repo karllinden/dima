@@ -59,36 +59,47 @@ install_headers(
   [
     'include/dima/derived.h',
     'include/dima/dima.h',
+    'include/dima/eventually_failing.h',
     'include/dima/exiting_on_failure.h',
+    'include/dima/failing.h',
     'include/dima/failure_hook.h',
+    'include/dima/invocation.h',
+    'include/dima/proxy.h',
+    'include/dima/pthread_mutex_locked.h',
+    'include/dima/randomly_failing.h',
     'include/dima/system.h',
   ],
   subdir: join_paths(slotname, name))
 
-install_headers(
-  [
-    'include/dima/proxy/eventually_failing.h',
-    'include/dima/proxy/failing.h',
-    'include/dima/proxy/invocation.h',
-    'include/dima/proxy/proxy.h',
-    'include/dima/proxy/pthread_mutex_locked.h',
-    'include/dima/proxy/randomly_failing.h',
-  ],
-  subdir: join_paths(slotname, name, 'proxy'))
-
 incdirs = include_directories('include')
 
+threads = dependency('threads')
+has_pthread_mutex = cc.has_type(
+    'pthread_mutex_t',
+    prefix: '#include <pthread.h>',
+    dependencies: threads)
+
+lib_src = [
+  'src/derived.c',
+  'src/dima.c',
+  'src/eventually_failing.c',
+  'src/exiting_on_failure.c',
+  'src/failing.c',
+  'src/failure_hook.c',
+  'src/invocation.c',
+  'src/proxy.c',
+  'src/randomly_failing.c',
+  'src/system.c',
+]
+if has_pthread_mutex
+  lib_src += ['src/pthread_mutex_locked.c']
+endif
 lib = library(
   slotname,
-  [
-    'src/derived.c',
-    'src/dima.c',
-    'src/exiting_on_failure.c',
-    'src/failure_hook.c',
-    'src/system.c',
-  ],
+  lib_src,
   include_directories: incdirs,
-  install: true)
+  install: true,
+  dependencies: threads)
 
 dima = declare_dependency(
   link_with: lib,
@@ -101,43 +112,6 @@ pkg.generate(
   url: url,
   subdirs: slotname,
   description: 'Dependency injectable memory allocator')
-
-threads = dependency('threads')
-has_pthread_mutex = cc.has_type(
-    'pthread_mutex_t',
-    prefix: '#include <pthread.h>',
-    dependencies: threads)
-
-proxy_slotname = name + '-proxy-' + slot
-proxy_src = [
-  'src/proxy/eventually_failing.c',
-  'src/proxy/failing.c',
-  'src/proxy/invocation.c',
-  'src/proxy/proxy.c',
-  'src/proxy/randomly_failing.c',
-]
-if has_pthread_mutex
-  proxy_src += ['src/proxy/pthread_mutex_locked.c']
-endif
-proxy_lib = library(
-  proxy_slotname,
-  proxy_src,
-  include_directories: incdirs,
-  install: true,
-  dependencies: [dima, threads])
-
-dima_proxy = declare_dependency(
-  link_with: proxy_lib,
-  include_directories: incdirs,
-  dependencies: dima)
-
-pkg.generate(
-  proxy_lib,
-  name: proxy_slotname,
-  url: url,
-  subdirs: slotname,
-  requires: slotname,
-  description: 'Proxy DIMA implementations')
 
 check = dependency('check', required: get_option('test'))
 if check.found()
@@ -171,7 +145,7 @@ if check.found()
     exe = executable(
       name + '_test',
       test_source,
-      dependencies: [check, dima_proxy],
+      dependencies: [check, dima],
       link_with: testlib)
     test(name, exe)
   endforeach

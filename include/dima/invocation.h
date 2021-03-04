@@ -15,8 +15,8 @@
  */
 
 /**
- * dima/proxy/invocation.h
- * -----------------------
+ * dima/invocation.h
+ * -----------------
  * Functions that allow invocations of DIMA functions to be treated as data.
  *
  * These functions are useful for testing and for creating proxies. To
@@ -25,8 +25,8 @@
  * the dima_invoke function.
  */
 
-#ifndef DIMA_PROXY_INVOCATION_H
-#define DIMA_PROXY_INVOCATION_H
+#ifndef DIMA_INVOCATION_H
+#define DIMA_INVOCATION_H
 
 #include <dima/dima.h>
 
@@ -116,4 +116,4 @@ int dima_compare_invocations(const struct dima_invocation *a,
 void dima_copy_invocation(struct dima_invocation *dest,
                           const struct dima_invocation *src);
 
-#endif /* !DIMA_PROXY_INVOCATION_H */
+#endif /* !DIMA_INVOCATION_H */

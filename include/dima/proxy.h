@@ -15,8 +15,8 @@
  */
 
 /**
- * dima/proxy/proxy.h
- * ------------------
+ * dima/proxy.h
+ * ------------
  * Partial DIMA implementation that makes it easy to write proxy
  * implementations.
  *
@@ -36,10 +36,10 @@
  * dima_invoke_proxy_fn.
  */
 
-#ifndef DIMA_PROXY_PROXY_H
-#define DIMA_PROXY_PROXY_H
+#ifndef DIMA_PROXY_H
+#define DIMA_PROXY_H
 
-#include <dima/proxy/invocation.h>
+#include <dima/invocation.h>
 
 struct dima_proxy;
 
@@ -73,4 +73,4 @@ static inline struct dima *dima_from_proxy(struct dima_proxy *proxy) {
     return &proxy->dima;
 }
 
-#endif /* !DIMA_PROXY_PROXY_H */
+#endif /* !DIMA_PROXY_H */

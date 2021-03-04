@@ -92,10 +92,10 @@
  *  + dima/derived.h
  *  + dima/exiting_on_failure.h
  *  + dima/failure_hook.h
- *  + dima/proxy/pthread_mutex_locked.h
- *  + dima/proxy/failing.h
- *  + dima/proxy/eventually_failing.h
- *  + dima/proxy/randomly_failing.h
+ *  + dima/pthread_mutex_locked.h
+ *  + dima/failing.h
+ *  + dima/eventually_failing.h
+ *  + dima/randomly_failing.h
  *
  * Clients outside the DIMA library may implement this abstraction, by creating
  * a struct that has a struct dima as first member and filling the composed dima

@@ -15,9 +15,9 @@
  */
 
 #include <dima/exiting_on_failure.h>
+#include <dima/failing.h>
 #include <dima/failure_hook.h>
-#include <dima/proxy/failing.h>
-#include <dima/proxy/invocation.h>
+#include <dima/invocation.h>
 #include <dima/system.h>
 
 #include "forwarding_tests.h"

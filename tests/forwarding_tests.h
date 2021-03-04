@@ -21,7 +21,7 @@
 
 #include <check.h>
 
-#include <dima/proxy/proxy.h>
+#include <dima/proxy.h>
 
 struct fake {
     struct dima_proxy proxy;

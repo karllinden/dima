@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <dima/proxy/eventually_failing.h>
+#include <dima/eventually_failing.h>
 
 static void *invoke_eventually_failing(struct dima_proxy *proxy,
                                        const struct dima_invocation *inv) {

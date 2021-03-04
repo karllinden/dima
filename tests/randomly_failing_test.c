@@ -18,7 +18,7 @@
 #include <time.h>
 
 #include <dima/exiting_on_failure.h>
-#include <dima/proxy/randomly_failing.h>
+#include <dima/randomly_failing.h>
 #include <dima/system.h>
 
 #include "forwarding_tests.h"

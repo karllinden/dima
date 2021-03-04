@@ -15,8 +15,8 @@
  */
 
 /**
- * dima/proxy/randomly_failing.h
- * -----------------------------
+ * dima/randomly_failing.h
+ * -----------------------
  * A DIMA proxy that fails randomly with a given rate.
  *
  * For portability, this implementation is based on rand(3) and is therefore
@@ -28,10 +28,10 @@
  * with srand(3).
  */
 
-#ifndef DIMA_PROXY_RANDOMLY_FAILING_H
-#define DIMA_PROXY_RANDOMLY_FAILING_H
+#ifndef DIMA_RANDOMLY_FAILING_H
+#define DIMA_RANDOMLY_FAILING_H
 
-#include <dima/proxy/proxy.h>
+#include <dima/proxy.h>
 
 struct dima_randomly_failing {
     struct dima_proxy proxy;
@@ -61,4 +61,4 @@ static inline struct dima *dima_from_randomly_failing(
     return dima_from_proxy(&dima->proxy);
 }
 
-#endif /* !DIMA_PROXY_RANDOMLY_FAILING_H */
+#endif /* !DIMA_RANDOMLY_FAILING_H */

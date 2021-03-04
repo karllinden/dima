@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-/*
- * dima/proxy/failing.h
- * --------------------
- * A DIMA proxy implementation that fails unconditionally, which is useful for
- * testing.
- *
- * This implementation is thread-safe.
- */
+#include <dima/failing.h>
 
-#ifndef DIMA_PROXY_FAILING_H
-#define DIMA_PROXY_FAILING_H
+static void *invoke_failing(struct dima_proxy *proxy UNUSED,
+                            const struct dima_invocation *invocation UNUSED) {
+    return NULL;
+}
 
-#include <dima/proxy/proxy.h>
-
-/**
- * Initializes the given struct dima_proxy so that it fails unconditionally.
- */
-void dima_init_failing(struct dima_proxy *proxy);
-
-#endif /* !DIMA_PROXY_FAILING_H */
+void dima_init_failing(struct dima_proxy *proxy) {
+    dima_init_proxy(proxy, invoke_failing, DIMA_IS_THREAD_SAFE);
+}

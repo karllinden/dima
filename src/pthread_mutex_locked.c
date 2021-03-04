@@ -17,7 +17,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include <dima/proxy/pthread_mutex_locked.h>
+#include <dima/pthread_mutex_locked.h>
 
 static void *invoke_pthread_mutex_locked(
         struct dima_proxy *proxy,

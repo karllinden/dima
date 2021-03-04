@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <dima/proxy/proxy.h>
+#include <dima/proxy.h>
 
 static inline void *invoke_proxy(struct dima *dima,
                                  const struct dima_invocation *invocation) {

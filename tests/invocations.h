@@ -17,7 +17,7 @@
 #ifndef INVOCATIONS_H
 #define INVOCATIONS_H
 
-#include <dima/proxy/invocation.h>
+#include <dima/invocation.h>
 
 #define N_INVOCATIONS 9
 

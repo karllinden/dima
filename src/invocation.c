@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <dima/proxy/proxy.h>
+#include <dima/proxy.h>
 
 static void COLD NORETURN fatal_impl(const char *file,
                                      int line,

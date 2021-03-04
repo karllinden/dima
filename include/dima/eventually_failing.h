@@ -15,7 +15,7 @@
  */
 
 /*
- * dima/proxy/eventually_failing.h
+ * dima/eventually_failing.h
  * -------------------------
  * A DIMA proxy that fails after a given number of allocations.
  *
@@ -23,10 +23,10 @@
  * be made thread safe by adding synchronization.
  */
 
-#ifndef DIMA_PROXY_EVENTUALLY_FAILING_H
-#define DIMA_PROXY_EVENTUALLY_FAILING_H
+#ifndef DIMA_EVENTUALLY_FAILING_H
+#define DIMA_EVENTUALLY_FAILING_H
 
-#include <dima/proxy/proxy.h>
+#include <dima/proxy.h>
 
 struct dima_eventually_failing {
     struct dima_proxy proxy;
@@ -47,4 +47,4 @@ static inline struct dima *dima_from_eventually_failing(
     return dima_from_proxy(&dima->proxy);
 }
 
-#endif /* !DIMA_PROXY_EVENTUALLY_FAILING_H */
+#endif /* !DIMA_EVENTUALLY_FAILING_H */

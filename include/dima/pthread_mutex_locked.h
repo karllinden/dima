@@ -15,8 +15,8 @@
  */
 
 /*
- * dima/proxy/pthread_mutex_locked.h
- * -------------------------
+ * dima/pthread_mutex_locked.h
+ * ---------------------------
  * A DIMA proxy that forwards to an other implementation while synchronizing on
  * a pthread_mutex_t.
  *
@@ -29,12 +29,12 @@
  * header are not included in built library.
  */
 
-#ifndef DIMA_PROXY_PTHREAD_MUTEX_LOCKED_H
-#define DIMA_PROXY_PTHREAD_MUTEX_LOCKED_H
+#ifndef DIMA_PTHREAD_MUTEX_LOCKED_H
+#define DIMA_PTHREAD_MUTEX_LOCKED_H
 
 #include <pthread.h>
 
-#include <dima/proxy/proxy.h>
+#include <dima/proxy.h>
 
 struct dima_pthread_mutex_locked {
     struct dima_proxy proxy;
@@ -67,4 +67,4 @@ static inline struct dima *dima_from_pthread_mutex_locked(
     return dima_from_proxy(&dima->proxy);
 }
 
-#endif /* !DIMA_PROXY_PTHREAD_MUTEX_LOCKED_H */
+#endif /* !DIMA_PTHREAD_MUTEX_LOCKED_H */

@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <dima/proxy/invocation.h>
+#include <dima/invocation.h>
 
 #include "powz.h"
 #include "standard_tests.h"

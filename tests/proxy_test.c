@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <dima/proxy/proxy.h>
+#include <dima/proxy.h>
 
 #include "invocations.h"
 #include "test.h"

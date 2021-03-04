@@ -15,7 +15,7 @@
  */
 
 #include <dima/exiting_on_failure.h>
-#include <dima/proxy/pthread_mutex_locked.h>
+#include <dima/pthread_mutex_locked.h>
 
 #include "forwarding_tests.h"
 #include "test.h"

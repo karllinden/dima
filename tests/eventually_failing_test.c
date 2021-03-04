@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+#include <dima/eventually_failing.h>
 #include <dima/exiting_on_failure.h>
-#include <dima/proxy/eventually_failing.h>
 #include <dima/system.h>
 
 #include "forwarding_tests.h"
