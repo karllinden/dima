@@ -29,7 +29,7 @@ struct fake {
     struct dima_invocation invocation;
 };
 
-struct fake forwardee;
+extern struct fake forwardee;
 
 static inline struct dima *dima_from_fake(struct fake *fake) {
     return dima_from_proxy(&fake->proxy);

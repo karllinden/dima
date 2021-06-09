@@ -19,6 +19,8 @@
 #include "invocations.h"
 #include "test.h"
 
+struct fake forwardee;
+
 static char fake_return[3];
 
 static void *invoke_fake(struct dima_proxy *proxy,
