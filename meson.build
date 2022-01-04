@@ -12,7 +12,9 @@ project(
 cc_flags = [
   '-Wformat-security',
   '-Wold-style-declaration',
+  '-Wold-style-definition',
   '-Wmissing-declarations',
+  '-Wstrict-prototypes',
 ]
 cc = meson.get_compiler('c')
 add_global_arguments(cc.get_supported_arguments(cc_flags), language: 'c')
