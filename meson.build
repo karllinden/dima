@@ -113,7 +113,10 @@ pkg.generate(
   subdirs: slotname,
   description: 'Dependency injectable memory allocator')
 
-check = dependency('check', required: get_option('test'))
+check = dependency(
+  'check',
+  required: get_option('test'),
+  version: '<0.13.0')
 if check.found()
   testlib = static_library(
     'testlib',
