@@ -26,6 +26,13 @@ START_TEST(test_system_is_thread_safe) {
 }
 END_TEST
 
+START_TEST(test_system_instance_is_equal_to_initialized_instance) {
+    struct dima *inst = dima_system_instance();
+    ck_assert_ptr_eq(instance.vtable, inst->vtable);
+    ck_assert_int_eq(instance.flags, inst->flags);
+}
+END_TEST
+
 void init_test_dima(void) {
     dima_init_system(&instance);
     test_dima = &instance;
@@ -33,5 +40,6 @@ void init_test_dima(void) {
 
 void add_tests(Suite *suite) {
     ADD_TEST(system_is_thread_safe);
+    ADD_TEST(system_instance_is_equal_to_initialized_instance);
     add_standard_tests(suite);
 }

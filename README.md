@@ -105,7 +105,8 @@ you don't want/need to know more:
 Using DIMA is very straight-forward.
 You only need to dependency inject a `struct dima` to where it is needed.
 The library comes with a few ready-to-use implementations of `struct dima`.
-For example see `dima_init_system()` and `dima_init_exiting_on_failure()`.
+For example see `dima_system_instance()` (or `dima_init_system()`) and
+`dima_init_exiting_on_failure()`.
 For example, this silly `range` function allows any DIMA implementation to be
 used for creating the returned array:
 
@@ -150,13 +151,12 @@ void example(struct dima *dima, size_t max_exclusive) {
 
 int main(void) {
     /* Use the memory allocation functions provided by the system. */
-    struct dima system;
-    dima_init_system(&system);
-    example(&system, 10);
+    struct dima *system_instance = dima_system_instance();
+    example(system_instance, 10);
 
     /* Decorate the system's allocator to exit with status 14 on failure. */
     struct dima_exiting_on_failure deof;
-    dima_init_exiting_on_failure(&deof, &system, 14);
+    dima_init_exiting_on_failure(&deof, system_instance, 14);
     example(dima_from_exiting_on_failure(&deof), 24);
 
     return 0;

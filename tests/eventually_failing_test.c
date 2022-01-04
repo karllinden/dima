@@ -54,9 +54,7 @@ START_TEST(test_is_not_thread_safe) {
 END_TEST
 
 START_TEST(test_is_not_thread_safe_even_if_next_is) {
-    struct dima system;
-    dima_init_system(&system);
-    dima_init_eventually_failing(&instance, &system, 2);
+    dima_init_eventually_failing(&instance, dima_system_instance(), 2);
     ck_assert_int_eq(0, dima_is_thread_safe(test_dima));
 }
 END_TEST
