@@ -11,7 +11,6 @@ project(
 
 cc_flags = [
   '-Wformat-security',
-  '-Wold-style-declaration',
   '-Wold-style-definition',
   '-Wmissing-declarations',
   '-Wstrict-prototypes',
