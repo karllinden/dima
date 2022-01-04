@@ -21,7 +21,8 @@
  * allocation functions where possible and uses fallback implementations when
  * necessary.
  *
- * The struct dima created by dima_init_system() is thread-safe.
+ * A struct dima initialized with dima_init_system() is thread-safe. The struct
+ * dima returned by dima_system_instance() is thread-safe.
  */
 
 #ifndef DIMA_SYSTEM_H
@@ -30,10 +31,23 @@
 #include <dima/dima.h>
 
 /**
- * Initializes the given dima to the system's allocation functions.
+ * Initializes the given dima to use the system's allocation functions.
  *
  * @param dima the structure to initialize
  */
 void dima_init_system(struct dima *dima);
+
+/**
+ * Returns a pointer to a global dima that uses the system's allocation
+ * functions.
+ *
+ * The returned dima has the same behavior as if it was initialized with
+ * dima_init_system.
+ *
+ * The returned dima is not const-qualified, because that is what the dima_*
+ * functions require. However, clients may not modify the returned dima. If
+ * modification is required, use dima_init_system with another struct dima.
+ */
+struct dima *dima_system_instance(void);
 
 #endif /* !DIMA_SYSTEM_H */
